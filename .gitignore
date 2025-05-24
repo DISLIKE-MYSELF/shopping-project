@@ -1,0 +1,15 @@
+﻿# Java / Spring Boot
+backend/target/
+*.class
+
+# Node / Vue
+frontend/node_modules/
+frontend/dist/
+
+# Docker / Env
+.env
+db/db_data/
+
+# IDE
+.idea/
+*.iml

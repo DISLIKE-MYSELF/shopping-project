@@ -1,0 +1,70 @@
+﻿version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: shop_db
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: \
+      MYSQL_DATABASE: \
+      MYSQL_USER: \
+      MYSQL_PASSWORD: \
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "\:3306"
+    networks:
+      - shop-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.backend
+    container_name: shop_backend
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/\
+      SPRING_DATASOURCE_USERNAME: \
+      SPRING_DATASOURCE_PASSWORD: \
+    ports:
+      - "\:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - shop-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    container_name: shop_frontend
+    ports:
+      - "\:80"
+    depends_on:
+      - backend
+    networks:
+      - shop-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 10s
+      retries: 3
+
+volumes:
+  db_data:
+
+networks:
+  shop-net:
+    driver: bridge

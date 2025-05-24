@@ -1,0 +1,3 @@
+﻿# Nginx for serving static files
+FROM nginx:alpine
+COPY dist/ /usr/share/nginx/html
