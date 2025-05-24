@@ -7,15 +7,15 @@ services:
     env_file:
       - .env
     environment:
-      MYSQL_ROOT_PASSWORD: \
-      MYSQL_DATABASE: \
-      MYSQL_USER: \
-      MYSQL_PASSWORD: \
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
-      - "\:3306"
+      - "3306:3306"
     networks:
       - shop-net
     healthcheck:
@@ -31,11 +31,11 @@ services:
     env_file:
       - .env
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/\
-      SPRING_DATASOURCE_USERNAME: \
-      SPRING_DATASOURCE_PASSWORD: \
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/${MYSQL_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "\:8080"
+      - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
@@ -52,7 +52,7 @@ services:
       dockerfile: Dockerfile.frontend
     container_name: shop_frontend
     ports:
-      - "\:80"
+      - "3000:80"
     depends_on:
       - backend
     networks:
