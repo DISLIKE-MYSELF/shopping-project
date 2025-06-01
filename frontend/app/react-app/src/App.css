@@ -1,0 +1,97 @@
+.app .link {
+  color: inherit;
+  text-decoration: none;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url('@assets/fonts/HarmonyOS Sans SC.woff2') format('woff2');
+}
+
+html {
+  /* 字体大一点不好吗 */
+  font-family: var(--my-font-family-base);
+  font-size: 18px !important;
+  text-size-adjust: none !important;
+  -webkit-text-size-adjust: none !important;
+  /* 字体阴影 */
+  text-shadow: var(--my-font-shadow);
+  /* 字体描边 */
+  -webkit-text-stroke: var(--my-font-stroke);
+  text-rendering: var(--my-render-text, unset);
+  shape-rendering: var(--my-render-shape, unset);
+  image-rendering: var(--my-render-image, unset);
+  font-optical-sizing: auto;
+  font-kerning: auto;
+}
+
+/* 粗体修正 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+strong,
+b {
+  -webkit-text-stroke: 0 rgba(0, 0, 0, 0);
+}
+
+/* 主题变量 */
+:root {
+  --my-color-primary: #5328e1;
+  --my-color-primary-dark: #471dd1;
+  --my-color-primary-darker: #431cc6;
+  --my-color-primary-darkest: #3717a3;
+  --my-color-primary-light: #663fe4;
+  --my-color-primary-lighter: #6f4be6;
+  --my-color-primary-lightest: #8b6eeb;
+
+  --my-font-family-base: var(--my-font-family), var(--my-font-basefont),
+    var(--my-font-emoji);
+  --my-font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+
+  /* 以下为自定义变量 */
+  --my-color-ms3: #208ebb;
+  --my-color-ms3-dark: #2162b2;
+  --my-color-ms4: #5328e1;
+  --my-color-ms4-dark: #0f023a;
+  --my-color-theme1: #ec38bc;
+  --my-color-theme2: #7303c0;
+  --my-color-glossary: #ff7733;
+
+  --my-img-scale-default: 80%;
+
+  --my-mono-font: 'JetBrainsMono Nerd Font Mono';
+  --my-font-family: 'HarmonyOS Sans SC';
+  --my-font-shadow: 0 0 0.7px #808080b8;
+  --my-font-stroke: 0.032px currentcolor;
+  --my-font-basefont: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+    Cantarell, Noto Sans, sans-serif, BlinkMacSystemFont, 'Segoe UI', Helvetica,
+    Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --my-font-emoji: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji',
+    'Android Emoji', EmojiSymbols, 'EmojiOne Mozilla', 'Twemoji Mozilla',
+    'Segoe UI Symbol', 'Noto Color Emoji Compat', 'Font Awesome 6 Pro',
+    'Font Awesome 5 Pro', FontAwesome, emoji, codicon, iconfont, icomoon,
+    IcoFont, bwi-font, fontello, themify, bootstrap-icons, 'Segoe Fluent Icons',
+    'Material Icons', 'Material Icons Extended', 'Material Icons Outlined',
+    'Material Icons Round', 'Material Icons Sharp', 'Material Icons Two Tone',
+    'Google Material Icons', 'Google Material Icons Filled',
+    'Material Symbols Outlined', 'Material Symbols Round',
+    'Material Symbols Rounded', 'Material Symbols Sharp', 'Google Symbols';
+  --my-no-stroke: 0px transparent;
+  --my-fix-stroke: var(--my-no-stroke);
+  --my-fix-shadow: 0 0 0.7px #8080802b;
+  --my-render-text: optimizeLegibility;
+  --my-render-shape: geometricPrecision;
+  --my-render-image: auto;
+  --my-mono-fallback: ui-monospace, 'Courier New', 'Liberation Mono', Courier;
+  --my-mono-shadowcolor: color-mix(
+    in srgb,
+    rgba(69, 69, 70, 0.05) 75%,
+    currentcolor 25%
+  );
+  --my-mono-shadow: 0 0 0 var(--my-mono-shadowcolor, currentcolor);
+  --my-mono-feature: 'liga' 1;
+}
