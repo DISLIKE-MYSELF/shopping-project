@@ -1,6 +1,4 @@
-﻿version: '3.8'
-
-services:
+﻿services:
   db:
     image: mysql:8.0
     container_name: shop_db
@@ -15,11 +13,11 @@ services:
       - db_data:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
-      - "3306:3306"
+      - '3306:3306'
     networks:
       - shop-net
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 10s
       retries: 5
 
@@ -35,14 +33,14 @@ services:
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "8080:8080"
+      - '8080:8080'
     depends_on:
       db:
         condition: service_healthy
     networks:
       - shop-net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/actuator/health']
       interval: 15s
       retries: 5
 
@@ -51,14 +49,21 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.frontend
     container_name: shop_frontend
+    environment:
+      REACT_APP_API_URL: ${REACT_APP_API_URL}
+      REACT_APP_VERSION: ${REACT_APP_VERSION}
+    volumes:
+      - ./frontend/app:/app
+      - /app/node_modules
+    command: sh -c "cd /app/react-app && npm install && npm run dev"
     ports:
-      - "3000:80"
+      - '5173:5173'
     depends_on:
       - backend
     networks:
       - shop-net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:5173']
       interval: 10s
       retries: 3
 
