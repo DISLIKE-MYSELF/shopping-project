@@ -1,4 +1,3 @@
-
 # 🛒 Shopping Project
 
 这是一个基于 Docker Compose 构建的多服务微服务应用的容器编排平台，模拟实现一个简单的购物网站系统。项目包括前端、后端以及 MySQL 数据库服务，旨在展示容器化部署的完整流程和服务协同机制。
@@ -26,7 +25,7 @@ shopping-project/
 ├── start.ps1               # 一键启动脚本
 └── .gitignore              # Git 忽略文件配置
 
-````
+```
 
 ---
 
@@ -37,7 +36,7 @@ shopping-project/
 ```bash
 git clone git@github.com:DISLIKE-MYSELF/shopping-project.git
 cd shopping-project
-````
+```
 
 ### ✅ 2. 配置环境变量
 
@@ -57,31 +56,31 @@ docker-compose up --build
 
 启动完成后，你可以访问：
 
-* 🖥️ 前端页面: [http://localhost:3000](http://localhost:3000)
-* 🔌 后端接口: [http://localhost:8080/api](http://localhost:8080/api)
-* 🗄️ 数据库服务: localhost:3306 （默认用户名和密码请查看 `.env`）
+- 🖥️ 前端页面: [http://localhost:5173](http://localhost:5173)
+- 🔌 后端接口: [http://localhost:8080/api](http://localhost:8080/api)
+- 🗄️ 数据库服务: localhost:3306 （默认用户名和密码请查看 `.env`）
 
 ---
 
 ## ⚙️ 技术栈
 
-* **前端**：React / Vue (待实现)
-* **后端**：Spring Boot
-* **数据库**：MySQL
-* **容器编排**：Docker + Docker Compose
+- **前端**：React+Vite+TypeScript+Valtio
+- **后端**：Spring Boot
+- **数据库**：MySQL
+- **容器编排**：Docker + Docker Compose
 
 ---
 
 ## 📚 项目文档
 
-* [部署日志（deployment-log.md）](./docs/deployment-log.md)
-* [操作手册（operations-guide.md）](./docs/operations-guide.md)
+- [部署日志（deployment-log.md）](./docs/deployment-log.md)
+- [操作手册（operations-guide.md）](./docs/operations-guide.md)
 
 ---
 
 ## 👨‍💻 作者
 
-* 李佳磊 @DISLIKE-MYSELF
+- 李佳磊 @DISLIKE-MYSELF
 
 ---
 
@@ -93,10 +92,10 @@ docker-compose up --build
 
 ## 🛠️ TODO（待办）
 
-* [ ] 完善前端页面并对接 API
-* [ ] 完成用户注册、登录、商品展示接口
-* [ ] 添加 Redis 缓存与 Nginx 网关（可选拓展）
-* [ ] 部署到远程服务器或云平台（可选）
+- [ ] 完善前端页面并对接 API
+- [ ] 完成用户注册、登录、商品展示接口
+- [ ] 添加 Redis 缓存与 Nginx 网关（可选拓展）
+- [ ] 部署到远程服务器或云平台（可选）
 
 ```
 
