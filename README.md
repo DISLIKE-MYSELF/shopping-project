@@ -54,6 +54,14 @@ cp .env.example .env
 docker-compose up --build
 ```
 
+### ✅ 4. 启动前端服务
+
+```bash
+docker-compose down --remove-orphans -v
+docker-compose build --no-cache frontend
+docker-compose up frontend
+```
+
 启动完成后，你可以访问：
 
 - 🖥️ 前端页面: [http://localhost:5173](http://localhost:5173)
@@ -104,5 +112,9 @@ docker-compose up --build
 ### 📌 接下来：
 
 - 后续每完成一个模块，就去更新相关文档（包括 README 和 `docs/` 中的文件）
+
+```
+
+```
 
 ```
