@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Spin, Button, Space, Result } from 'antd'
 import './Product.css'
 import useFetch from '@/hooks/useFetch'
 import { useParams } from 'react-router-dom'
@@ -14,41 +15,57 @@ const ProductPage = () => {
   return (
     <div className='product'>
       {loading ? (
-        'loading'
+        <Spin size='large' />
+      ) : error ? (
+        <Result
+          status='404'
+          title='404'
+          subTitle='该商品不存在！'
+          extra={<Button type='primary'>Back Home</Button>}
+        />
       ) : (
         <>
           <div className='left'>
             <div className='mainImg'>
-              <img
-                src={process.env.REACT_APP_UPLOAD_URL + data?.image}
-                alt={data?.name}
-              />
+              <img src={'/' + data?.image} alt={data?.name} />
             </div>
           </div>
           <div className='right'>
             <h1>{data?.name}</h1>
-            <span className='price'>{data?.price}</span>
+            <span className='price'>{data?.price} ￥</span>
             <div className='quantity'>
-              <button
+              <Button
+                type='text'
                 onClick={() =>
                   setQuantity((prev) => (prev === 1 ? 1 : prev - 1))
                 }
               >
                 -
-              </button>
+              </Button>
               {quantity}
-              <button onClick={() => setQuantity((prev) => prev + 1)}>+</button>
+              <Button
+                type='text'
+                onClick={() => setQuantity((prev) => prev + 1)}
+              >
+                +
+              </Button>
             </div>
-            <button className='add' onClick={() => {}}>
-              <ShoppingCartOutlined /> 加入购物车
-            </button>
-            <div className='links'>
-              <div className='item'>
-                <HeartOutlined /> 加入收藏
-              </div>
+            <div className='store'>
+              <span>库存 {data?.stock} 件</span>
             </div>
+            <Space size='large'>
+              <Button
+                className='add'
+                icon={<ShoppingCartOutlined />}
+                onClick={() => {}}
+                type='primary'
+              >
+                加入购物车
+              </Button>
+              <HeartOutlined />
+            </Space>
             <div className='info'>
-              <span>商品描述</span>
+              <h3>商品描述</h3>
               <div className='discription'>{data?.description}</div>
             </div>
           </div>

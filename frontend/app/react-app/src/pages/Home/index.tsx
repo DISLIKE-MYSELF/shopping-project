@@ -1,4 +1,4 @@
-import Slider from '@/components/Slider/Slider'
+import Slider from '@/components/Slider'
 const Home = () => {
   return (
     <div className='home'>
