@@ -62,6 +62,13 @@ docker-compose build --no-cache frontend
 docker-compose up frontend
 ```
 
+若提示端口异常占用，可尝试
+
+```bash
+net stop winnat
+net start winnat
+```
+
 启动完成后，你可以访问：
 
 - 🖥️ 前端页面: [http://localhost:5173](http://localhost:5173)
