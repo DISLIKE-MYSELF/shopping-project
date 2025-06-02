@@ -12,3 +12,5 @@ db/db_data/
 # IDE
 .idea/
 *.iml
+
+.vscode
