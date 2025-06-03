@@ -4,25 +4,44 @@ import List from '../../components/List/List'
 import useFetch from '../../hooks/useFetch'
 import './Products.css'
 
-const Products = () => {
-  const catId = parseInt(useParams().id)
-  const [maxPrice, setMaxPrice] = useState(1000)
-  const [sort, setSort] = useState(null)
-  const [selectedSubCats, setSelectedSubCats] = useState([])
+// 定义子分类接口类型，根据你的后端数据结构调整
+interface SubCategory {
+  id: string
+  attributes: {
+    title: string
+    // 如果有其他字段，继续补充
+  }
+}
 
-  const { data, loading, error } = useFetch(
+const Products = () => {
+  // 明确 useParams 类型，catId 是字符串或 undefined
+  const { id: catId } = useParams<{ id: string }>()
+
+  const [maxPrice, setMaxPrice] = useState(1000)
+  const [sort, setSort] = useState<null | 'asc' | 'desc'>(null)
+  const [selectedSubCats, setSelectedSubCats] = useState<string[]>([])
+
+  // 指定 useFetch 泛型为 SubCategory 数组
+  const { data, loading, error } = useFetch<SubCategory[]>(
     `/sub-categories?[filters][categories][id][$eq]=${catId}`,
   )
 
-  const handleChange = (e) => {
+  // 类型声明改为 React.ChangeEvent<HTMLInputElement>
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     const isChecked = e.target.checked
 
-    setSelectedSubCats(
-      isChecked
-        ? [...selectedSubCats, value]
-        : selectedSubCats.filter((item) => item !== value),
+    setSelectedSubCats(prev =>
+      isChecked ? [...prev, value] : prev.filter(item => item !== value),
     )
+  }
+
+  if (!catId) {
+    return <div>未选择分类</div>
+  }
+
+  if (error) {
+    return <div>加载子分类失败：{typeof error === 'object' && error !== null && 'message' in error ? (error as Error).message : '未知错误'}</div>
   }
 
   return (
@@ -30,18 +49,25 @@ const Products = () => {
       <div className='left'>
         <div className='filterItem'>
           <h2>Product Categories</h2>
-          {data?.map((item) => (
-            <div className='inputItem' key={item.id}>
-              <input
-                type='checkbox'
-                id={item.id}
-                value={item.id}
-                onChange={handleChange}
-              />
-              <label htmlFor={item.id}>{item.attributes.title}</label>
-            </div>
-          ))}
+          {loading && <p>加载中...</p>}
+          {!loading && data && data.length > 0 ? (
+            data.map(item => (
+              <div className='inputItem' key={item.id}>
+                <input
+                  type='checkbox'
+                  id={item.id}
+                  value={item.id}
+                  onChange={handleChange}
+                  checked={selectedSubCats.includes(item.id)}
+                />
+                <label htmlFor={item.id}>{item.attributes.title}</label>
+              </div>
+            ))
+          ) : (
+            !loading && <p>暂无子分类</p>
+          )}
         </div>
+
         <div className='filterItem'>
           <h2>Filter by price</h2>
           <div className='inputItem'>
@@ -50,11 +76,13 @@ const Products = () => {
               type='range'
               min={0}
               max={1000}
-              onChange={(e) => setMaxPrice(e.target.value)}
+              value={maxPrice}
+              onChange={e => setMaxPrice(Number(e.target.value))}
             />
             <span>{maxPrice}</span>
           </div>
         </div>
+
         <div className='filterItem'>
           <h2>Sort by</h2>
           <div className='inputItem'>
@@ -63,7 +91,8 @@ const Products = () => {
               id='asc'
               value='asc'
               name='price'
-              onChange={(e) => setSort('asc')}
+              onChange={() => setSort('asc')}
+              checked={sort === 'asc'}
             />
             <label htmlFor='asc'>Price (Lowest first)</label>
           </div>
@@ -73,17 +102,19 @@ const Products = () => {
               id='desc'
               value='desc'
               name='price'
-              onChange={(e) => setSort('desc')}
+              onChange={() => setSort('desc')}
+              checked={sort === 'desc'}
             />
             <label htmlFor='desc'>Price (Highest first)</label>
           </div>
         </div>
       </div>
+
       <div className='right'>
         <img
           className='catImg'
           src='https://images.pexels.com/photos/1074535/pexels-photo-1074535.jpeg?auto=compress&cs=tinysrgb&w=1600'
-          alt=''
+          alt='分类图'
         />
         <List
           catId={catId}

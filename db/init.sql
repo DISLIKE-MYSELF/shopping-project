@@ -1,6 +1,6 @@
 -- 创建数据库
-CREATE DATABASE IF NOT EXISTS shopdb;
-USE shopdb;
+CREATE DATABASE IF NOT EXISTS shop_db;
+USE shop_db;
 
 -- 创建 users 表
 CREATE TABLE IF NOT EXISTS users (
