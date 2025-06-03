@@ -1,0 +1,46 @@
+.wrapper {
+  margin: 20px;
+}
+
+.card {
+  max-width: 35rem;
+  margin: 0 auto;
+}
+
+.imageContainer {
+  width: 100%; /* 设置图片容器宽度 */
+  height: 200px; /* 设置图片容器高度 */
+  overflow: hidden; /* 裁剪超出部分 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.imageContainer img {
+  width: 100%; /* 图片宽度 */
+  height: 100%; /* 图片高度 */
+  object-fit: cover; /* 裁剪图片以适应容器 */
+}
+
+.contentContainer {
+  font-size: 1rem;
+}
+
+.title {
+  font-size: 1.2rem;
+}
+
+.quantity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 1rem;
+  width: fit-content;
+}
+
+.cartFooter {
+  margin: auto;
+  font-size: 2rem;
+  font-weight: 500;
+}

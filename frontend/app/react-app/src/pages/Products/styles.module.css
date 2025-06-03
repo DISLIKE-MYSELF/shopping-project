@@ -1,0 +1,8 @@
+.wrapper {
+  margin: 20px;
+}
+
+.col {
+  display: flex;
+  justify-content: center;
+}

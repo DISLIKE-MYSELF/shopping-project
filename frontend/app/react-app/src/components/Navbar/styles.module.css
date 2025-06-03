@@ -1,0 +1,24 @@
+.navbar {
+  height: 80px;
+  padding: 0 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  justify-content: center;
+  align-items: center;
+  letter-spacing: 0.2rem;
+}
+
+.navbarItems {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.icons {
+  display: flex;
+  gap: 15px;
+  color: #777;
+  cursor: pointer;
+}
