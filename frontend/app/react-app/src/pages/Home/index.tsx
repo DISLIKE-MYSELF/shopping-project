@@ -1,5 +1,5 @@
+
 import React from 'react';
-import Slider from '@/components/Slider/Slider';
 import './Home.css';  // 你可以根据需要写样式
 
 // 模拟几个商品数据
@@ -13,6 +13,7 @@ const featuredProducts = [
   { id: 3, name: '智能手表', price: 1999, img: watchImg },
 ];
 
+import Slider from '@/components/Slider'
 const Home = () => {
   return (
     <div className='home'>

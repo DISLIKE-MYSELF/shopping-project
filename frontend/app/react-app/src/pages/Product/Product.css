@@ -10,19 +10,6 @@
   gap: 20px;
 }
 
-/* 如果暂时没有多图浏览功能，下面的 .images 可以先注释或删除 */
-.product .left .images {
-  flex: 1;
-}
-
-.product .left .images img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
-
 .product .left .mainImg {
   flex: 5;
 }
@@ -37,7 +24,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 1.5rem;
 }
 
 .product .right .price {
@@ -56,74 +43,32 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  font-size: 1.1rem;
 }
 
 .product .right .quantity button {
   width: 50px;
   height: 50px;
+  font-size: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 1px solid #2879fe;
-  border-radius: 4px;
-  background-color: white;
-  font-size: 20px;
-  transition: background-color 0.3s ease;
-}
-
-.product .right .quantity button:hover {
-  background-color: #e6f0ff;
-}
-
-.quantity-number {
-  min-width: 30px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 500;
 }
 
 .product .right .add {
-  width: 250px;
+  height: 2.5rem;
+  width: 12rem;
   padding: 10px;
-  background-color: #2879fe;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  cursor: pointer;
-  border: none;
+  font-size: 1rem;
   font-weight: 500;
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
 }
 
-.product .right .add:hover {
-  background-color: #1f61d1;
-}
-
-.product .right .add:active {
-  background-color: #154a9a;
-}
-
-.product .right .links {
-  display: flex;
-  gap: 20px;
-}
-
-.product .right .links .item {
+.product .right .favorite {
   display: flex;
   align-items: center;
   gap: 10px;
   color: #2879fe;
-  font-size: 14px;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.product .right .links .item:hover {
-  color: #ff4d4f; /* 红色表示收藏效果 */
 }
 
 .product .right .info {
@@ -131,32 +76,5 @@
   flex-direction: column;
   gap: 10px;
   color: gray;
-  font-size: 14px;
-  margin-top: 30px;
-}
-
-.product .right .info hr {
-  width: 200px;
-  border: 1px solid rgb(238, 237, 237);
-}
-
-.product .right hr {
-  border: 1px solid rgb(238, 237, 237);
-}
-
-/* 新增购物车操作成功反馈 */
-.cart-feedback {
-  margin-top: 10px;
-  color: green;
-  font-weight: 600;
-  animation: fadeOut 1.5s forwards;
-}
-
-@keyframes fadeOut {
-  0% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { opacity: 0; }
-}
-.product .right .info span {
-  font-weight: 500;
+  font-size: 1rem;
 }

@@ -16,12 +16,13 @@ const useFetch = <T>(url: string): FetchResult<T> => {
     const fetchData = async () => {
       try {
         setLoading(true)
-        const res = await makeRequest.get(url)
-        setData(res.data.data as T)
+        const data = await makeRequest<T>('get', url)
+        setData(data as T)
       } catch {
         setError(true)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
     fetchData()
   }, [url])

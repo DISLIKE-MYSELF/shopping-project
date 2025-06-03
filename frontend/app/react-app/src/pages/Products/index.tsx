@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import List from '../../components/List/List'
-import useFetch from '../../hooks/useFetch'
+import List from '@/components/List/List'
+import useFetch from '@/hooks/useFetch'
 import './Products.css'
 
 // 定义子分类接口类型，根据你的后端数据结构调整
