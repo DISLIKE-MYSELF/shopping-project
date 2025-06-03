@@ -10,16 +10,6 @@
   gap: 20px;
 }
 
-.product .left .mainImg {
-  flex: 5;
-}
-
-.product .left .mainImg img {
-  width: 100%;
-  max-height: 600px; /* 调小更适合常规屏幕 */
-  object-fit: cover;
-}
-
 .product .right {
   flex: 1;
   display: flex;

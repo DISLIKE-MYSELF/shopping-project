@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import makeRequest from '@/utils/makeRequest'
+import type { Method } from '@/types'
 
 interface MutationOptions<T> {
   onSuccess?: (data: T) => void
@@ -17,7 +18,7 @@ interface MutationResult<T> {
 
 const useMutation = <T>(
   url: string,
-  method: 'post' | 'put' | 'patch' | 'delete' = 'post',
+  method: Method,
   options?: MutationOptions<T>,
 ): MutationResult<T> => {
   const [data, setData] = useState<T | null>(null)

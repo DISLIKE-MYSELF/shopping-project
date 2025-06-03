@@ -1,4 +1,6 @@
 import axios, { type AxiosResponse, AxiosError } from 'axios'
+import instance from './mockdata'
+import type { Method } from '@/types'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -78,13 +80,13 @@ const requestMethod = {
     const res = await api.delete(url)
     return res.data.data
   },
-}
 
-const makeRequest = <T>(
-  method: 'get' | 'post' | 'put' | 'patch' | 'delete',
-  url: string,
-  data?: T,
-): Promise<T> => {
+  mockGet: async <T>(url: string): Promise<T> => {
+    const res = await instance.get(url)
+    return res.data
+  },
+}
+const makeRequest = <T>(method: Method, url: string, data?: T): Promise<T> => {
   return requestMethod[method](url, data)
 }
 

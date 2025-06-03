@@ -1,3 +1,6 @@
 export * from './product'
 export * from './carts'
 export * from './user'
+export * from './order'
+export * from './cartItem'
+export * from './method'
