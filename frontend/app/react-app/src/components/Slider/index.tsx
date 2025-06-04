@@ -1,4 +1,4 @@
-import './Slider.css'
+import styles from './styles.module.css'
 import { Carousel } from 'antd'
 import img1 from '@/assets/img/home0.jpeg'
 import img2 from '@/assets/img/home1.jpeg'
@@ -28,7 +28,7 @@ const Slider = () => {
       autoplay={{ dotDuration: true }}
       autoplaySpeed={4000}
       dotPosition={'bottom'}
-      className='slider'
+      className={styles.slider}
     >
       {slides.map((slide) => (
         <img

@@ -2,32 +2,75 @@
   margin: 20px;
 }
 
+.list {
+  margin: auto;
+  display: flex;
+  justify-content: center;
+}
+
 .card {
-  max-width: 35rem;
+  position: relative;
+  height: 10rem;
+  width: 35rem;
   margin: 0 auto;
+  cursor: pointer;
+  user-select: none;
+  border-block-end: none !important;
+
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  border-radius: 1rem;
+  border: none;
+  font-size: 20px;
+  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,
+    rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px,
+    rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+}
+
+.divider {
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(5, 5, 5, 0.3) 50%,
+    transparent 100%
+  );
+  box-shadow: rgba(214, 214, 231, 0.1) 0 2px 4px inset;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  position: relative;
+  margin: 2rem 0;
 }
 
 .imageContainer {
-  width: 100%; /* 设置图片容器宽度 */
-  height: 200px; /* 设置图片容器高度 */
-  overflow: hidden; /* 裁剪超出部分 */
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .imageContainer img {
-  width: 100%; /* 图片宽度 */
-  height: 100%; /* 图片高度 */
-  object-fit: cover; /* 裁剪图片以适应容器 */
+  width: 100%;
+  height: 100%;
+  object-fit: scale-down;
 }
 
 .contentContainer {
   font-size: 1rem;
+  color: #333;
 }
 
 .title {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
 
 .quantity {
@@ -43,4 +86,24 @@
   margin: auto;
   font-size: 2rem;
   font-weight: 500;
+}
+
+.cartFooter > span {
+  color: #2879fe;
+}
+
+.price {
+  font-size: 1.2rem;
+  color: #2879fe;
+}
+
+.deleteButton {
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.itemTotalPrice > span {
+  color: #2879fe;
 }

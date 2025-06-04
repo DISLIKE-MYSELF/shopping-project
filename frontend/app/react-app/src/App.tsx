@@ -26,10 +26,10 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { path: '/', element: <Home /> },
-      { path: '/products', element: <Products /> }, // 商城页面
-      { path: '/product/:id', element: <Product /> }, // 单个商品详情
-      { path: '/login', element: <Login /> }, // 登录页
-      { path: '/register', element: <Register /> }, // 注册页
+      { path: '/products', element: <Products /> },
+      { path: '/product/:id', element: <Product /> },
+      { path: '/login', element: <Login /> },
+      { path: '/register', element: <Register /> },
       { path: '/cart', element: <Cart /> },
     ],
   },
