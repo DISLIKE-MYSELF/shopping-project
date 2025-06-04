@@ -6,7 +6,7 @@ import NotFound from '@/components/NotFound'
 import PageTitle from '@/components/PageTitle'
 import { Flex, Empty, List, Button } from 'antd'
 import styles from './styles.module.css'
-import makeRequest from '@/utils/makeRequest'
+import { makeRequest } from '@/utils/makeRequest'
 import { DeleteOutlined } from '@ant-design/icons'
 
 interface CartItemData {

@@ -1,0 +1,56 @@
+.wrapper {
+  padding: 1rem 5rem;
+  width: 100%;
+}
+
+.imgWrapper {
+  width: 40%;
+}
+
+.infoWrapper {
+  width: 50%;
+}
+
+.name {
+  font-size: 2.5rem;
+  font-weight: 500;
+  letter-spacing: 0.4rem;
+}
+
+.price {
+  font-size: 2rem;
+  color: #2879fe;
+  font-weight: 500;
+}
+
+.stock {
+  font-size: 1.5rem;
+  font-weight: 400;
+  text-align: center;
+  text-justify: center;
+  line-height: 1.5rem;
+}
+
+.addCartButton {
+  font-size: 1.5rem;
+  padding: 1.2rem;
+}
+
+.favoriteButton {
+  font-size: 1.5rem;
+  height: 100%;
+}
+
+.discriptionWrapper {
+  margin-top: 2rem;
+}
+
+.discriptionTitle {
+  font-size: 1.5rem;
+}
+
+.discription {
+  font-size: 1.2rem;
+  line-height: 1.5rem;
+  color: #333;
+}

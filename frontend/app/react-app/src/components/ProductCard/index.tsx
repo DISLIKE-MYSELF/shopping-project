@@ -8,7 +8,6 @@ interface ProductCardProps {
   product: Product
 }
 const ProductCard = ({ product }: ProductCardProps) => {
-  // const { data, loading, error } = useFetch<Product>(`/products/${id}`)
   const navigate = useNavigate()
   const handleClick = () => {
     navigate(`/product/${product.id}`)

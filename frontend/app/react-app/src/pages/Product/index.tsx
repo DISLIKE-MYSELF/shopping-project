@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Button, Space, Image } from 'antd'
-import './Product.css'
+import { Button, Space, Image, Flex } from 'antd'
+import styles from './styles.module.css'
 import { useParams } from 'react-router-dom'
 import {
   HeartOutlined,
@@ -11,11 +11,12 @@ import type { Product } from '@/types'
 import useFetch from '@/hooks/useFetch'
 import Loading from '@/components/Loading'
 import NotFound from '@/components/NotFound'
+import QuantityPanel from '@/components/QuantityPanel'
 const ProductPage = () => {
   const id = useParams().id
   const { data, loading, error } = useFetch<Product>(`/products/${id}`)
 
-  const [quantity, setQuantity] = useState(0)
+  const [quantity, setQuantity] = useState(1)
   const [favorited, setFavorited] = useState(false)
   const [cartClicked, setCartClicked] = useState(false)
 
@@ -27,15 +28,6 @@ const ProductPage = () => {
     setFavorited(!favorited)
   }
 
-  const addQuantity = () => {
-    if (typeof data?.stock === 'number' && data.stock > quantity)
-      setQuantity((prev) => prev + 1)
-  }
-
-  const reduceQuantity = () => {
-    setQuantity((prev) => (prev === 0 ? 0 : prev - 1))
-  }
-
   if (loading) return <Loading />
   if (error || data === null) {
     console.log(error)
@@ -43,33 +35,30 @@ const ProductPage = () => {
   }
 
   return (
-    <div className='product'>
-      <div className='left'>
+    <Flex className={styles.wrapper} justify='space-between'>
+      <Flex className={styles.imgWrapper}>
         <Image
           width='100%'
           className='mainImg'
           src={`/img/${data?.image}`}
           alt={data?.name}
         />
-      </div>
-      <div className='right'>
-        <h1>{data?.name}</h1>
-        <span className='price'>{data?.price} ￥</span>
-        <div className='quantity'>
-          <Button type='text' onClick={reduceQuantity}>
-            -
-          </Button>
-          {quantity}
-          <Button type='text' onClick={addQuantity}>
-            +
-          </Button>
-        </div>
-        <div className='store'>
-          <span>库存 {data?.stock} 件</span>
-        </div>
+      </Flex>
+      <Flex className={styles.infoWrapper} vertical gap={'large'}>
+        <div className={styles.name}>{data?.name}</div>
+        <div className={styles.price}>{data?.price} ￥</div>
+        <Space size='large'>
+          <QuantityPanel
+            defaultQuantity={quantity}
+            maxQuantity={data?.stock}
+            minQuantity={1}
+            onQuantityChange={(quantity) => setQuantity(quantity)}
+          />
+          <div className={styles.stock}>库存 {data?.stock} 件</div>
+        </Space>
         <Space size='large'>
           <Button
-            className='add'
+            className={styles.addCartButton}
             icon={<ShoppingCartOutlined />}
             onClick={handleAddCart}
             type='primary'
@@ -77,17 +66,24 @@ const ProductPage = () => {
             加入购物车
           </Button>
           {favorited ? (
-            <HeartFilled onClick={handleFavorite} style={{ color: 'red' }} />
+            <HeartFilled
+              onClick={handleFavorite}
+              style={{ color: 'red' }}
+              className={styles.favoriteButton}
+            />
           ) : (
-            <HeartOutlined onClick={handleFavorite} />
+            <HeartOutlined
+              onClick={handleFavorite}
+              className={styles.favoriteButton}
+            />
           )}
         </Space>
-        <div className='info'>
-          <h3>商品描述</h3>
-          <div className='discription'>{data?.description}</div>
-        </div>
-      </div>
-    </div>
+        <Flex className={styles.discriptionWrapper} vertical gap={'large'}>
+          <div className={styles.discriptionTitle}>商品描述</div>
+          <div className={styles.discription}>{data?.description}</div>
+        </Flex>
+      </Flex>
+    </Flex>
   )
 }
 
