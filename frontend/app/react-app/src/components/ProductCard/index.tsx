@@ -1,5 +1,5 @@
 import styles from './styles.module.css'
-import { Card } from 'antd'
+import { Card, Flex } from 'antd'
 import type { Product } from '@/types'
 import { useNavigate } from 'react-router-dom'
 const { Meta } = Card
@@ -28,10 +28,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
         title={<div className={styles.title}>{product?.name}</div>}
         className={styles.contentContainer}
         description={
-          <>
-            <p>价格：{product?.price} ￥</p>
-            <p>库存：{product?.stock} 件</p>
-          </>
+          <Flex align='center' gap='middle'>
+            <div className={styles.price}>{product?.price} ￥</div>
+            <div
+              style={{
+                color: product.stock === 0 ? 'red' : '#000',
+                fontSize: '1.2rem',
+              }}
+            >
+              库存 {product?.stock} 件
+            </div>
+          </Flex>
         }
       />
     </Card>

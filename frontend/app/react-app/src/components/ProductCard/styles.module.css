@@ -1,20 +1,20 @@
 .card {
-  width: 280px;
+  width: 300px;
 }
 
 .imageContainer {
-  width: 100%; /* 设置图片容器宽度 */
-  height: 200px; /* 设置图片容器高度 */
-  overflow: hidden; /* 裁剪超出部分 */
+  height: 300px;
+  width: 200px;
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .imageContainer img {
-  width: 100%; /* 图片宽度 */
-  height: 100%; /* 图片高度 */
-  object-fit: cover; /* 裁剪图片以适应容器 */
+  width: 100%;
+  height: 100%;
+  object-fit: scale-down;
 }
 
 .contentContainer {
@@ -23,5 +23,10 @@
 }
 
 .title {
+  font-size: 1.3rem;
+}
+
+.price {
   font-size: 1.2rem;
+  color: #2879fe;
 }
