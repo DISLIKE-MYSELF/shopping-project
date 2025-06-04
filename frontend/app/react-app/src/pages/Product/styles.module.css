@@ -1,6 +1,7 @@
 .wrapper {
   padding: 1rem 5rem;
   width: 100%;
+  user-select: none;
 }
 
 .imgWrapper {

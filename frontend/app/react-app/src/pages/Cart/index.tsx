@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { CartItem, Product } from '@/types'
 import useFetch from '@/hooks/useFetch'
 import Loading from '@/components/Loading'
 import NotFound from '@/components/NotFound'
 import PageTitle from '@/components/PageTitle'
-import { Flex, Empty, List, Button } from 'antd'
+import { Flex, Empty, List, Button, Space } from 'antd'
 import styles from './styles.module.css'
 import { makeRequest } from '@/utils/makeRequest'
 import { DeleteOutlined } from '@ant-design/icons'
+import QuantityPanel from '@/components/QuantityPanel'
+import { useNavigate } from 'react-router-dom'
 
 interface CartItemData {
   id: number
@@ -18,71 +20,84 @@ interface CartItemData {
   stock: number
 }
 
+const productCache = new Map<number, Product>()
 const Cart = () => {
-  // 模拟购物车初始数据
   const [cartItems, setCartItems] = useState<CartItemData[]>([])
+  const [isLoading, setIsLoading] = useState(false)
   const { data, loading, error } = useFetch<CartItem[]>(`/carts/user/1`)
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true)
       if (data && data.length > 0) {
-        for (const item of data) {
-          const product = await makeRequest<Product>(
-            'mockGet',
-            `/products/${item.productId}`,
-          )
-          setCartItems((items) => [
-            ...items,
-            {
-              id: item.id,
-              name: product.name,
-              price: product.price,
-              quantity: item.quantity,
-              image: product.image,
-              stock: product.stock,
-            },
-          ])
-        }
+        const cartItemsData = await Promise.all(
+          data.map(async (item) => {
+            try {
+              let product = productCache.get(item.productId)
+              if (!product) {
+                product = await makeRequest<Product>(
+                  'mockGet',
+                  `/products/${item.productId}`,
+                )
+              }
+              return {
+                id: item.id,
+                name: product.name,
+                price: product.price,
+                quantity: item.quantity,
+                image: product.image,
+                stock: product.stock,
+              }
+            } catch (err) {
+              console.error(`Failed to fetch product ${item.productId}:`, err)
+              return null
+            }
+          }),
+        )
+        setCartItems(
+          cartItemsData.filter((item): item is CartItemData => item !== null),
+        )
+      } else {
+        setCartItems([])
       }
+      setIsLoading(false)
     }
     fetchData()
   }, [data])
-
-  const incrementQuantity = (id: number) => {
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
-      ),
-    )
-  }
-
-  const decrementQuantity = (id: number) => {
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id
-          ? { ...item, quantity: item.quantity > 1 ? item.quantity - 1 : 1 }
-          : item,
-      ),
-    )
-  }
 
   const removeItem = (id: number) => {
     setCartItems((items) => items.filter((item) => item.id !== id))
   }
 
-  const totalPrice = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0,
-  )
+  const updateQuantity = (id: number, quantity: number) => {
+    setCartItems((items) =>
+      items.map((item) => (item.id === id ? { ...item, quantity } : item)),
+    )
+  }
 
-  if (loading) return <Loading />
+  const totalPrice = useMemo(() => {
+    return cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0,
+    )
+  }, [cartItems])
+
+  if (loading || isLoading) return <Loading />
   if (error) {
     console.log(error)
     return <NotFound />
   }
-  if (!data || data.length === 0)
+  if (cartItems.length === 0)
     return (
-      <Flex className={styles.wrapper} justify='center' align='center'>
+      <Flex
+        className={styles.wrapper}
+        justify='center'
+        align='center'
+        vertical
+        gap={'large'}
+      >
         <PageTitle title='购物车' />
         <Empty />
       </Flex>
@@ -93,57 +108,76 @@ const Cart = () => {
       <PageTitle title='购物车' />
       <List
         itemLayout='vertical'
+        className={styles.list}
         size='large'
         dataSource={cartItems}
         renderItem={(item) => (
-          <List.Item
-            key={item.id}
-            className={styles.card}
-            extra={
-              <div className={styles.imageContainer}>
-                <img src={`/img/${item?.image}`} alt={item?.name} />
-              </div>
-            }
-          >
-            <List.Item.Meta
-              title={<div className={styles.title}>{item.name}</div>}
-              description={
-                <div className={styles.contentContainer}>
-                  <p>价格：{item?.price} ￥</p>
-                  <p>库存：{item?.stock} 件</p>
+          <>
+            <List.Item
+              key={item.id}
+              className={styles.card}
+              onClick={() => navigate(`/product/${item.id}`)}
+              extra={
+                <div className={styles.imageContainer}>
+                  <img src={`/img/${item.image}`} alt={item.name} />
                 </div>
               }
-            />
-            <div className={styles.quantity}>
-              <Button
-                type='text'
-                onClick={() => {
-                  decrementQuantity(item.id)
-                }}
-              >
-                -
-              </Button>
-              {item.quantity}
-              <Button
-                type='text'
-                onClick={() => {
-                  incrementQuantity(item.id)
-                }}
-              >
-                +
-              </Button>
-              <Button
-                icon={<DeleteOutlined />}
-                danger
-                onClick={() => {
-                  removeItem(item.id)
-                }}
-              ></Button>
-            </div>
-          </List.Item>
+            >
+              <List.Item.Meta
+                title={
+                  <Space size='large'>
+                    <div className={styles.title}>{item.name}</div>
+                    <div className={styles.price}>{item.price} ￥</div>
+                  </Space>
+                }
+                description={
+                  <Flex
+                    className={styles.contentContainer}
+                    gap='middle'
+                    vertical
+                  >
+                    <div
+                      style={{
+                        color: item.stock === 0 ? 'red' : '#000',
+                        fontSize: '1.2rem',
+                      }}
+                    >
+                      库存 {item.stock} 件
+                    </div>
+                  </Flex>
+                }
+              />
+              <Flex justify='space-between' align='center'>
+                <QuantityPanel
+                  defaultQuantity={item.quantity}
+                  maxQuantity={item.stock}
+                  minQuantity={1}
+                  onQuantityChange={(quantity) => {
+                    updateQuantity(item.id, quantity)
+                  }}
+                />
+                <div className={styles.itemTotalPrice}>
+                  总计 <span>{item.price * item.quantity} ￥</span>
+                </div>
+                <Button
+                  icon={<DeleteOutlined />}
+                  danger
+                  type='text'
+                  className={styles.deleteButton}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    removeItem(item.id)
+                  }}
+                />
+              </Flex>
+            </List.Item>
+            <div className={styles.divider}></div>
+          </>
         )}
       ></List>
-      <div className={styles.cartFooter}>总价：{totalPrice.toFixed(2)}</div>
+      <div className={styles.cartFooter}>
+        合计 <span>{totalPrice.toFixed(2)} ￥</span>
+      </div>
     </Flex>
   )
 }

@@ -120,19 +120,32 @@ const mockProducts: Product[] = [
   },
 ]
 
-const mockCartItem1: CartItem = {
-  id: 1,
-  productId: 1,
-  quantity: 2,
-  createAt: '2024-06-01T12:00:00Z',
-}
-
-const mockCartItem2: CartItem = {
-  id: 2,
-  productId: 2,
-  quantity: 5,
-  createAt: '2024-06-01T12:00:00Z',
-}
+const mockCart: CartItem[] = [
+  {
+    id: 1,
+    productId: 1,
+    quantity: 3,
+    createAt: '2024-06-01T12:00:00Z',
+  },
+  {
+    id: 2,
+    productId: 2,
+    quantity: 2,
+    createAt: '2024-06-01T12:00:00Z',
+  },
+  {
+    id: 5,
+    productId: 5,
+    quantity: 1,
+    createAt: '2024-06-01T12:00:00Z',
+  },
+  {
+    id: 8,
+    productId: 8,
+    quantity: 1,
+    createAt: '2024-06-01T12:00:00Z',
+  },
+]
 
 mockProducts.map((product) => {
   mock.onGet(`/products/${product.id}`).reply(200, product)
@@ -140,6 +153,6 @@ mockProducts.map((product) => {
 
 mock.onGet('/products').reply(200, mockProducts)
 
-mock.onGet('/carts/user/1').reply(200, [mockCartItem1, mockCartItem2])
+mock.onGet('/carts/user/1').reply(200, mockCart)
 
 export default instance

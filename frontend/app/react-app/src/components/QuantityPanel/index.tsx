@@ -16,20 +16,22 @@ const QuantityPanel = ({
   onQuantityChange,
 }: QuantityPanelProps) => {
   const [quantity, setQuantity] = useState(defaultQuantity)
-  const increaseQuantity = () => {
+  const increaseQuantity = (e: React.MouseEvent) => {
+    e.stopPropagation()
     if (maxQuantity > quantity) {
       setQuantity((prev) => prev + 1)
       if (onQuantityChange) {
-        onQuantityChange(quantity)
+        onQuantityChange(quantity + 1)
       }
     }
   }
 
-  const decreaseQuantity = () => {
+  const decreaseQuantity = (e: React.MouseEvent) => {
+    e.stopPropagation()
     if (minQuantity < quantity) {
       setQuantity((prev) => prev - 1)
       if (onQuantityChange) {
-        onQuantityChange(quantity)
+        onQuantityChange(quantity - 1)
       }
     }
   }
@@ -38,14 +40,14 @@ const QuantityPanel = ({
     <Space className={styles.wrapper} size='middle'>
       <Button
         type='text'
-        className={styles.button}
+        className={styles.decreaseButton}
         onClick={decreaseQuantity}
         icon={<MinusOutlined />}
       />
       <span className={styles.quantity}>{quantity}</span>
       <Button
         type='text'
-        className={styles.button}
+        className={styles.increaseButton}
         onClick={increaseQuantity}
         icon={<PlusOutlined />}
       />
