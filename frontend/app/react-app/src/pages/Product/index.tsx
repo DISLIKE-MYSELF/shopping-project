@@ -36,25 +36,30 @@ const ProductPage = () => {
 
   return (
     <Flex className={styles.wrapper} justify='space-between'>
-      <Flex className={styles.imgWrapper}>
+      <Flex className={styles.imgWrapper} justify='center'>
         <Image
-          width='100%'
-          className='mainImg'
-          src={`/img/${data?.image}`}
-          alt={data?.name}
+          className={styles.mainImg}
+          src={`/img/${data.image}`}
+          alt={data.name}
         />
+        {data.stock === 0 && <div className={styles.imgMask}></div>}
       </Flex>
       <Flex className={styles.infoWrapper} vertical gap={'large'}>
-        <div className={styles.name}>{data?.name}</div>
-        <div className={styles.price}>{data?.price} ￥</div>
+        <div className={styles.name}>{data.name}</div>
+        <div className={styles.price}>{data.price} ￥</div>
         <Space size='large'>
           <QuantityPanel
-            defaultQuantity={quantity}
-            maxQuantity={data?.stock}
+            defaultQuantity={data.stock === 0 ? 0 : quantity}
+            maxQuantity={data.stock}
             minQuantity={1}
             onQuantityChange={(quantity) => setQuantity(quantity)}
           />
-          <div className={styles.stock}>库存 {data?.stock} 件</div>
+          <div
+            className={styles.stock}
+            style={{ color: data.stock === 0 ? 'red' : '#000' }}
+          >
+            库存 {data.stock} 件
+          </div>
         </Space>
         <Space size='large'>
           <Button
@@ -78,9 +83,9 @@ const ProductPage = () => {
             />
           )}
         </Space>
-        <Flex className={styles.discriptionWrapper} vertical gap={'large'}>
-          <div className={styles.discriptionTitle}>商品描述</div>
-          <div className={styles.discription}>{data?.description}</div>
+        <Flex className={styles.descriptionWrapper} vertical gap={'large'}>
+          <div className={styles.descriptionTitle}>商品描述</div>
+          <div className={styles.description}>{data.description}</div>
         </Flex>
       </Flex>
     </Flex>

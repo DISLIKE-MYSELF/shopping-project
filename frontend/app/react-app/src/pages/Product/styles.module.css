@@ -5,6 +5,25 @@
 
 .imgWrapper {
   width: 40%;
+  max-height: 600px;
+  object-fit: scale-down;
+  position: relative;
+  height: 600px;
+}
+
+.imgWrapper img:global(.ant-image-img) {
+  height: 100%;
+}
+
+.imgMask {
+  background-image: url('@/assets/img/soldout.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  width: 50%;
+  height: 50%;
 }
 
 .infoWrapper {
@@ -41,15 +60,15 @@
   height: 100%;
 }
 
-.discriptionWrapper {
+.descriptionWrapper {
   margin-top: 2rem;
 }
 
-.discriptionTitle {
+.descriptionTitle {
   font-size: 1.5rem;
 }
 
-.discription {
+.description {
   font-size: 1.2rem;
   line-height: 1.5rem;
   color: #333;
