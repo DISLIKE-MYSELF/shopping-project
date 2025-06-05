@@ -7,6 +7,6 @@ export interface Product {
   stock: number
   image: string
   rating: number
-  createAt: string
-  updateAt: string
+  createdAt: string
+  updatedAt: string
 }

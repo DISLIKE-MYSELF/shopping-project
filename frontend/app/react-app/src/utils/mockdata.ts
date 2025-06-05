@@ -5,6 +5,9 @@ import MockAdapter from 'axios-mock-adapter'
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 })
 
 const mock = new MockAdapter(instance, { delayResponse: 1000 })
@@ -19,8 +22,8 @@ const mockProducts: Product[] = [
     category: '电子产品',
     stock: 5,
     rating: 4.5,
-    createAt: '2024-06-01T12:00:00Z',
-    updateAt: '2024-06-10T12:00:00Z',
+    createdAt: '2024-06-01T12:00:00Z',
+    updatedAt: '2024-06-10T12:00:00Z',
   },
   {
     id: 2,
@@ -31,8 +34,8 @@ const mockProducts: Product[] = [
     category: '电子产品',
     stock: 3,
     rating: 4.5,
-    createAt: '2024-06-01T12:00:00Z',
-    updateAt: '2024-06-10T12:00:00Z',
+    createdAt: '2024-06-01T12:00:00Z',
+    updatedAt: '2024-06-10T12:00:00Z',
   },
   {
     id: 3,
@@ -43,8 +46,8 @@ const mockProducts: Product[] = [
     category: '电子产品',
     stock: 3,
     rating: 3.5,
-    createAt: '2024-06-01T12:00:00Z',
-    updateAt: '2024-06-10T12:00:00Z',
+    createdAt: '2024-06-01T12:00:00Z',
+    updatedAt: '2024-06-10T12:00:00Z',
   },
   {
     id: 4,
@@ -55,8 +58,8 @@ const mockProducts: Product[] = [
     category: '电子产品',
     stock: 3,
     rating: 3.5,
-    createAt: '2024-06-01T12:00:00Z',
-    updateAt: '2024-06-10T12:00:00Z',
+    createdAt: '2024-06-01T12:00:00Z',
+    updatedAt: '2024-06-10T12:00:00Z',
   },
   {
     id: 5,
@@ -67,8 +70,8 @@ const mockProducts: Product[] = [
     category: '电子产品',
     stock: 3,
     rating: 3.5,
-    createAt: '2024-06-01T12:00:00Z',
-    updateAt: '2024-06-10T12:00:00Z',
+    createdAt: '2024-06-01T12:00:00Z',
+    updatedAt: '2024-06-10T12:00:00Z',
   },
   {
     id: 6,
@@ -79,8 +82,8 @@ const mockProducts: Product[] = [
     category: '电子产品',
     stock: 3,
     rating: 3.5,
-    createAt: '2024-06-01T12:00:00Z',
-    updateAt: '2024-06-10T12:00:00Z',
+    createdAt: '2024-06-01T12:00:00Z',
+    updatedAt: '2024-06-10T12:00:00Z',
   },
   {
     id: 7,
@@ -91,8 +94,8 @@ const mockProducts: Product[] = [
     category: '???',
     stock: 1,
     rating: 3.5,
-    createAt: '2024-06-01T12:00:00Z',
-    updateAt: '2024-06-10T12:00:00Z',
+    createdAt: '2024-06-01T12:00:00Z',
+    updatedAt: '2024-06-10T12:00:00Z',
   },
   {
     id: 8,
@@ -103,8 +106,8 @@ const mockProducts: Product[] = [
     category: '???',
     stock: 1,
     rating: 3.5,
-    createAt: '2024-06-01T12:00:00Z',
-    updateAt: '2024-06-10T12:00:00Z',
+    createdAt: '2024-06-01T12:00:00Z',
+    updatedAt: '2024-06-10T12:00:00Z',
   },
   {
     id: 9,
@@ -115,8 +118,8 @@ const mockProducts: Product[] = [
     category: '???',
     stock: 0,
     rating: 3.5,
-    createAt: '2024-06-01T12:00:00Z',
-    updateAt: '2024-06-10T12:00:00Z',
+    createdAt: '2024-06-01T12:00:00Z',
+    updatedAt: '2024-06-10T12:00:00Z',
   },
 ]
 
@@ -125,25 +128,25 @@ const mockCart: CartItem[] = [
     id: 1,
     productId: 1,
     quantity: 3,
-    createAt: '2024-06-01T12:00:00Z',
+    createdAt: '2024-06-01T12:00:00Z',
   },
   {
     id: 2,
     productId: 2,
     quantity: 2,
-    createAt: '2024-06-01T12:00:00Z',
+    createdAt: '2024-06-01T12:00:00Z',
   },
   {
     id: 5,
     productId: 5,
     quantity: 1,
-    createAt: '2024-06-01T12:00:00Z',
+    createdAt: '2024-06-01T12:00:00Z',
   },
   {
     id: 8,
     productId: 8,
     quantity: 1,
-    createAt: '2024-06-01T12:00:00Z',
+    createdAt: '2024-06-01T12:00:00Z',
   },
 ]
 
