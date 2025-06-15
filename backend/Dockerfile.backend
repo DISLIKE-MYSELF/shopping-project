@@ -1,6 +1,17 @@
-﻿# Based on OpenJDK 17
+﻿# 构建应用
+FROM maven:3.8.6-openjdk-17-slim AS build
+WORKDIR /app
+COPY backend/pom.xml .
+RUN mvn dependency:go-offline
+COPY backend/src ./src
+RUN mvn package -DskipTests
+
+# 运行应用
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY backend/target/backend-0.0.1-SNAPSHOT.jar app.jar
+# 复制构建好的jar包到容器内
+COPY --from=build /app/target/backend-0.0.1-SNAPSHOT.jar app.jar
+# 复制sql初始化脚本到容器内
+COPY backend/src/main/resources/init.sql /app/init.sql
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

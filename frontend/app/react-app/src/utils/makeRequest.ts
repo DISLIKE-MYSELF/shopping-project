@@ -2,6 +2,22 @@ import axios, { type AxiosResponse, AxiosError } from 'axios'
 import instance from './mockdata'
 import type { Method } from '@/types'
 
+interface RequestError {
+  status: number
+  message: string
+}
+
+const isRequestError = (error: unknown): error is RequestError => {
+  return (
+    error !== null &&
+    typeof error === 'object' &&
+    'status' in error &&
+    typeof error.status === 'number' &&
+    'message' in error &&
+    typeof error.message === 'string'
+  )
+}
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 5000,
@@ -34,20 +50,20 @@ api.interceptors.response.use(
     if (error.response) {
       // 服务器返回了错误状态码
       const { status, data } = error.response
-      return Promise.reject({
+      return Promise.reject<RequestError>({
         status,
         message:
           (data as { message?: string })?.message ?? `请求失败: ${status}`,
       })
     } else if (error.request) {
       // 请求已发送但未收到响应
-      return Promise.reject({
+      return Promise.reject<RequestError>({
         status: 0,
         message: '网络错误，请检查您的连接',
       })
     } else {
       // 请求配置出错
-      return Promise.reject({
+      return Promise.reject<RequestError>({
         status: -1,
         message: error.message,
       })
@@ -90,4 +106,4 @@ const makeRequest = <T>(method: Method, url: string, data?: T): Promise<T> => {
   return requestMethod[method](url, data)
 }
 
-export default makeRequest
+export { makeRequest, type RequestError, isRequestError }

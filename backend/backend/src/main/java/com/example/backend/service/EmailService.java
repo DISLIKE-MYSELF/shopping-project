@@ -1,12 +1,15 @@
 package com.example.backend.service;
 
-import com.example.backend.model.Email;
-
 import java.util.List;
+import com.example.backend.dto.request.SendEmailRequest;
+import com.example.backend.dto.response.EmailResponse;
 
 public interface EmailService {
-    List<Email> getAllEmails();
-    List<Email> getEmailsByUserId(Long userId);
-    Email sendEmail(Email email);
-    void deleteEmail(Long id);
+  List<EmailResponse> getEmailsByUsername(String username);
+
+  EmailResponse getEmailById(String username, Long id);
+
+  EmailResponse sendEmail(SendEmailRequest request);
+
+  void deleteEmailById(String username, Long id);
 }

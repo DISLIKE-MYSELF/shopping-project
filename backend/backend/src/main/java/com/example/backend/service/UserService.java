@@ -1,14 +1,27 @@
 package com.example.backend.service;
 
+import java.util.List;
+import com.example.backend.dto.request.LoginRequest;
+import com.example.backend.dto.request.RegisterRequest;
+import com.example.backend.dto.response.LoginResponse;
+import com.example.backend.dto.response.RegisterResponse;
+import com.example.backend.dto.response.UserProfileResponse;
 import com.example.backend.model.User;
 
-import java.util.List;
-import java.util.Optional;
-
 public interface UserService {
-    List<User> getAllUsers();
-    Optional<User> getUserById(Long id);
-    User registerUser(User user);
-    Optional<User> login(String username, String password);
-    void deleteUser(Long id);
+
+
+  List<User> getAllUsers();
+
+  User getUserByUsername(String username);
+
+  UserProfileResponse getUserProfileById(Long id);
+
+  UserProfileResponse getUserProfileByUsername(String username);
+
+  RegisterResponse register(RegisterRequest request);
+
+  LoginResponse login(LoginRequest request);
+
+  void deleteUserByUsername(String username);
 }

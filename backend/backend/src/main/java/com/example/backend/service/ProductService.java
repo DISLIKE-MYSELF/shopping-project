@@ -1,14 +1,18 @@
 package com.example.backend.service;
 
-import com.example.backend.model.Product;
-
-import java.util.List;
-import java.util.Optional;
+import com.example.backend.dto.request.CreateProductRequest;
+import com.example.backend.dto.request.UpdateProductRequest;
+import com.example.backend.dto.response.ProductCardsResponse;
+import com.example.backend.dto.response.ProductResponse;
 
 public interface ProductService {
-    List<Product> getAllProducts();
-    Optional<Product> getProductById(Long id);
-    Product createProduct(Product product);
-    Product updateProduct(Long id, Product updatedProduct);
-    void deleteProduct(Long id);
+  ProductCardsResponse getAllProducts();
+
+  ProductResponse getProductById(Long id);
+
+  ProductResponse createProduct(CreateProductRequest request);
+
+  ProductResponse updateProduct(Long id, UpdateProductRequest request);
+
+  void deleteProduct(Long id);
 }

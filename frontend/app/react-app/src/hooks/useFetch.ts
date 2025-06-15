@@ -1,16 +1,20 @@
 import { useEffect, useState } from 'react'
-import makeRequest from '@/utils/makeRequest.ts'
+import {
+  makeRequest,
+  isRequestError,
+  type RequestError,
+} from '@/utils/makeRequest.ts'
 
 interface FetchResult<T> {
   data: T | null
   loading: boolean
-  error: Error | null
+  error: RequestError | null
 }
 
 const useFetch = <T>(url: string): FetchResult<T> => {
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<Error | null>(null)
+  const [error, setError] = useState<RequestError | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,11 +23,21 @@ const useFetch = <T>(url: string): FetchResult<T> => {
         const data = await makeRequest<T>('mockGet', url)
         setData(data as T)
       } catch (err) {
-        if (err instanceof Error) {
-          setError(err)
+        let requestError: RequestError
+        if (isRequestError(err)) {
+          requestError = err
+        } else if (err instanceof Error) {
+          requestError = {
+            message: err.message,
+            status: 500,
+          }
         } else {
-          setError(new Error('An unknown error occurred'))
+          requestError = {
+            message: '发生未知错误',
+            status: 500,
+          }
         }
+        setError(requestError)
       } finally {
         setLoading(false)
       }

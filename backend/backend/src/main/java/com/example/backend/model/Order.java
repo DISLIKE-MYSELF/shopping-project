@@ -1,67 +1,65 @@
 package com.example.backend.model;
 
-import jakarta.persistence.*;
-
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "orders")
+@Data
 public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    // 与用户表建立多对一关系
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  // 与用户表建立多对一关系
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @Column(name = "order_date")
-    private LocalDateTime orderDate;
+  // 收货地址
+  @Column(nullable = false, length = 255)
+  private String address;
 
-    private String status;
+  // 订单状态
+  @Column(length = 20)
+  @Enumerated(EnumType.STRING)
+  private OrderStatus status;
 
-    @Column(name = "created_at")
-    private Timestamp createdAt;
+  // 创建时间
+  @Column(name = "created_at")
+  private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
-    private Timestamp updatedAt;
+  // 更新时间
+  @Column(name = "updated_at")
+  private LocalDateTime updatedAt;
 
-    @PrePersist
-    public void prePersist() {
-        orderDate = LocalDateTime.now();
-        createdAt = new Timestamp(System.currentTimeMillis());
-        updatedAt = createdAt;
+  @PrePersist
+  public void prePersist() {
+    if (status == null) {
+      status = OrderStatus.PENDING;
     }
-
-    @PreUpdate
-    public void preUpdate() {
-        updatedAt = new Timestamp(System.currentTimeMillis());
+    if (createdAt == null) {
+      createdAt = LocalDateTime.now();
     }
+    if (updatedAt == null) {
+      updatedAt = createdAt;
+    }
+  }
 
-    // Getters & Setters
-    public Long getId() { return id; }
-
-    public void setId(Long id) { this.id = id; }
-
-    public User getUser() { return user; }
-
-    public void setUser(User user) { this.user = user; }
-
-    public LocalDateTime getOrderDate() { return orderDate; }
-
-    public void setOrderDate(LocalDateTime orderDate) { this.orderDate = orderDate; }
-
-    public String getStatus() { return status; }
-
-    public void setStatus(String status) { this.status = status; }
-
-    public Timestamp getCreatedAt() { return createdAt; }
-
-    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
-
-    public Timestamp getUpdatedAt() { return updatedAt; }
-
-    public void setUpdatedAt(Timestamp updatedAt) { this.updatedAt = updatedAt; }
+  @PreUpdate
+  public void preUpdate() {
+    updatedAt = LocalDateTime.now();
+  }
 }

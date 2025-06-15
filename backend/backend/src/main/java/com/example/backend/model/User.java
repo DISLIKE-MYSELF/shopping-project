@@ -1,53 +1,86 @@
 package com.example.backend.model;
 
-import jakarta.persistence.*;
-
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "users") // 避免与 MySQL 内部 user 表冲突
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Data
+public class User implements UserDetails {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false, unique = true, length = 50)
-    private String username;
+  // 用户名
+  @Column(nullable = false, unique = true, length = 50)
+  private String username;
 
-    @Column(nullable = false, length = 255)
-    private String password;
+  // 密码
+  @Column(nullable = false, length = 255)
+  private String password;
 
-    @Column(nullable = false, unique = true, length = 100)
-    private String email;
+  // 邮箱
+  @Column(nullable = false, unique = true, length = 50)
+  private String email;
 
-    @Column(name = "created_at")
-    private Timestamp createdAt;
+  // 地址
+  @Column(length = 255)
+  private String address;
 
-    @Column(name = "last_login")
-    private Timestamp lastLogin;
+  // 创建时间
+  @Column(name = "created_at")
+  private LocalDateTime createdAt;
 
-    // Getter & Setter
-    public Long getId() { return id; }
+  // 最后登录时间
+  @Column(name = "last_login")
+  private LocalDateTime lastLogin;
 
-    public void setId(Long id) { this.id = id; }
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+  }
 
-    public String getUsername() { return username; }
+  @Override
+  public String getUsername() {
+    return this.username;
+  }
 
-    public void setUsername(String username) { this.username = username; }
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
 
-    public String getPassword() { return password; }
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
 
-    public void setPassword(String password) { this.password = password; }
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
 
-    public String getEmail() { return email; }
+  @Override
+  public boolean isEnabled() {
+    return true;
+  }
 
-    public void setEmail(String email) { this.email = email; }
-
-    public Timestamp getCreatedAt() { return createdAt; }
-
-    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
-
-    public Timestamp getLastLogin() { return lastLogin; }
-
-    public void setLastLogin(Timestamp lastLogin) { this.lastLogin = lastLogin; }
+  @PrePersist
+  public void prePersist() {
+    if (createdAt == null) {
+      createdAt = LocalDateTime.now();
+    }
+  }
 }

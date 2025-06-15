@@ -1,75 +1,77 @@
 package com.example.backend.model;
 
-import jakarta.persistence.*;
-
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "payments")
+@Data
 public class Payment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    // 与订单建立关联
-    @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
+  // 与订单建立关联
+  @OneToOne
+  @JoinColumn(name = "order_id", nullable = false)
+  private Order order;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal amount;
+  // 订单金额
+  @Column(nullable = false, precision = 20, scale = 2)
+  private BigDecimal amount;
 
-    @Column(name = "payment_method", length = 50)
-    private String paymentMethod;
+  // 支付方式
+  @Column(name = "payment_method", length = 50)
+  private String paymentMethod;
 
-    @Column(length = 20)
-    private String status;
+  // 支付状态
+  @Column(length = 20)
+  @Enumerated(EnumType.STRING)
+  PaymentStatus status;
 
-    @Column(name = "created_at")
-    private Timestamp createdAt;
+  // 支付时间
+  @Column(name = "payment_time")
+  private LocalDateTime paymentTime;
 
-    @Column(name = "updated_at")
-    private Timestamp updatedAt;
+  // 创建时间
+  @Column(name = "created_at")
+  private LocalDateTime createdAt;
 
-    @PrePersist
-    public void prePersist() {
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        this.createdAt = now;
-        this.updatedAt = now;
+  // 更新时间
+  @Column(name = "updated_at")
+  private LocalDateTime updatedAt;
+
+  @PrePersist
+  public void prePersist() {
+    if (status == null) {
+      status = PaymentStatus.PENDING;
     }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = new Timestamp(System.currentTimeMillis());
+    if (createdAt == null) {
+      createdAt = LocalDateTime.now();
     }
+    if (updatedAt == null) {
+      updatedAt = createdAt;
+    }
+  }
 
-    // Getters & Setters
-    public Long getId() { return id; }
-
-    public void setId(Long id) { this.id = id; }
-
-    public Order getOrder() { return order; }
-
-    public void setOrder(Order order) { this.order = order; }
-
-    public BigDecimal getAmount() { return amount; }
-
-    public void setAmount(BigDecimal amount) { this.amount = amount; }
-
-    public String getPaymentMethod() { return paymentMethod; }
-
-    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
-
-    public String getStatus() { return status; }
-
-    public void setStatus(String status) { this.status = status; }
-
-    public Timestamp getCreatedAt() { return createdAt; }
-
-    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
-
-    public Timestamp getUpdatedAt() { return updatedAt; }
-
-    public void setUpdatedAt(Timestamp updatedAt) { this.updatedAt = updatedAt; }
+  @PreUpdate
+  public void preUpdate() {
+    this.updatedAt = LocalDateTime.now();
+    if (this.status.equals(PaymentStatus.PAIED)) {
+      this.paymentTime = updatedAt;
+    }
+  }
 }

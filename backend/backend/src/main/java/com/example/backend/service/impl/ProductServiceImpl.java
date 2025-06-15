@@ -1,52 +1,87 @@
 package com.example.backend.service.impl;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.example.backend.dto.request.CreateProductRequest;
+import com.example.backend.dto.request.UpdateProductRequest;
+import com.example.backend.dto.response.ProductCardsResponse;
+import com.example.backend.dto.response.ProductResponse;
+import com.example.backend.exception.EntityNotFoundException;
+import com.example.backend.mapper.ProductMapper;
 import com.example.backend.model.Product;
 import com.example.backend.repository.ProductRepository;
 import com.example.backend.service.ProductService;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository productRepository;
+  private final ProductRepository productRepository;
+  private final ProductMapper productMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+  @Override
+  public ProductCardsResponse getAllProducts() {
+    return productMapper.toProductCardsResponse(productRepository.findAll());
+  }
+
+  @Override
+  public ProductResponse getProductById(Long id) {
+    Product product = productRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Product", id));
+
+    return productMapper.toProductResponse(product);
+  }
+
+  @Override
+  @Transactional
+  public ProductResponse createProduct(CreateProductRequest request) {
+    Product product = new Product();
+    product.setName(request.name());
+    product.setImage(request.image());
+    product.setPrice(request.price());
+    product.setDescription(request.description());
+    product.setCategory(request.category());
+    product.setStock(request.stock());
+    product.setRating(request.rating());
+    return productMapper.toProductResponse(productRepository.save(product));
+  }
+
+  @Override
+  @Transactional
+  public ProductResponse updateProduct(Long id, UpdateProductRequest request) {
+    Product product = productRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Product", id));
+
+    // 更新字段，仅当字段不为空时
+    if (request.name() != null && !request.name().isEmpty()) {
+      product.setName(request.name());
+    }
+    if (request.image() != null && !request.image().isEmpty()) {
+      product.setImage(request.image());
+    }
+    if (request.price() != null) {
+      product.setPrice(request.price());
+    }
+    if (request.stock() != null) {
+      product.setStock(request.stock());
+    }
+    if (request.description() != null && !request.description().isEmpty()) {
+      product.setDescription(request.description());
+    }
+    if (request.category() != null && !request.category().isEmpty()) {
+      product.setCategory(request.category());
+    }
+    if (request.rating() != null) {
+      product.setRating(request.rating());
     }
 
-    @Override
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
-    }
+    return productMapper.toProductResponse(productRepository.saveAndFlush(product));
+  }
 
-    @Override
-    public Optional<Product> getProductById(Long id) {
-        return productRepository.findById(id);
-    }
-
-    @Override
-    public Product createProduct(Product product) {
-        return productRepository.save(product);
-    }
-
-    @Override
-    public Product updateProduct(Long id, Product updatedProduct) {
-        return productRepository.findById(id)
-                .map(product -> {
-                    product.setName(updatedProduct.getName());
-                    product.setDescription(updatedProduct.getDescription());
-                    product.setPrice(updatedProduct.getPrice());
-                    product.setStock(updatedProduct.getStock());
-                    return productRepository.save(product);
-                })
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-    }
-
-    @Override
-    public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
-    }
+  @Override
+  @Transactional
+  public void deleteProduct(Long id) {
+    productRepository.deleteById(id);
+  }
 }
