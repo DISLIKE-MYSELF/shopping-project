@@ -3,6 +3,8 @@ package com.example.backend.model;
 import java.sql.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,7 +34,8 @@ public class Order {
 
   // 订单状态
   @Column(length = 20)
-  private String status;
+  @Enumerated(EnumType.STRING)
+  private OrderStatus status;
 
   // 创建时间
   @Column(name = "created_at")
@@ -45,7 +48,7 @@ public class Order {
   @PrePersist
   public void prePersist() {
     if (status == null) {
-      status = "pending";
+      status = OrderStatus.PENDING;
     }
     if (createdAt == null) {
       createdAt = new Timestamp(System.currentTimeMillis());

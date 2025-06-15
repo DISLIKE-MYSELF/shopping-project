@@ -344,36 +344,41 @@ F-->>C: Continue to controller
 
 ## 订单（Order）
 
+该模块的所有 api 都必须在在登录状态下访问，即请求头需包含 token，否则返回 403 *Forbidden*
+
 ### 获取某用户所有订单
 
-*  `GET /api/users/{userId}/orders`
+**GET** `/api/orders/my-orders`
 
-### 获取平台所有订单
+返回数据
 
-+ `GET /api/orders`
++ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
 
-### 获取指定订单
-
-*  `GET /api/orders/{orderId}`
+*  数据：`List<OrderResponse>`
 
 ### 创建订单
 
-* `POST /api/orders`
-* 请求体：
+**POST** `/api/orders/my-orders`
+
+请求体：`CreateOrderRequest`
 
 ```json
 {
-  "userId": 1,
-  "orderItems": cartItemId[],
-  "status"?: "pending"
+  cartItemIds: [1, 2, 3]
 }
 ```
 
+返回数据
+
++ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
++ 数据：`OrderResponse`
+
 ### 更新订单状态
 
-* `POST /api/orders/{orderId}/status`
+**POST** `/api/orders/{orderId}/status`
 
-- 请求体：
+请求体：`UpdateOrderRequest`
 
 ```json
  {
@@ -381,9 +386,27 @@ F-->>C: Continue to controller
  }
 ```
 
+返回数据
+
++ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
++ 数据：`OrderResponse`
+
 ### 删除订单
 
-* `DELETE /api/orders/{orderId}`
+**DELETE** `/api/orders/{orderId}`
+
+请求体：无
+
+返回数据
+
+- 状态码：成功（204 *NoContent*）；未登录（403 *Forbidden*）
+
+- 数据：空
+
+### *获取平台所有订单
+
+**GET** `/api/orders`
 
 ---
 

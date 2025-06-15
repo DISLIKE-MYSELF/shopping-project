@@ -12,11 +12,11 @@ public interface FavoriteItemRepository extends JpaRepository<FavoriteItem, Long
 
   Optional<FavoriteItem> findByFavoriteIdAndProductId(Long favoriteId, Long productId);
 
-  @Query("SELECT fi FROM FavoriteItem fi " + "JOIN FETCH fi.product "
+  @Query("SELECT DISTINCT fi FROM FavoriteItem fi " + "JOIN FETCH fi.product "
       + "WHERE fi.favorite.id = :favoriteId")
   List<FavoriteItem> findByFavoriteIdWithProduct(@Param("favoriteId") Long favoriteId);
 
-  @Query("SELECT fi FROM FavoriteItem fi " + "JOIN FETCH fi.product "
+  @Query("SELECT DISTINCT fi FROM FavoriteItem fi " + "JOIN FETCH fi.product "
       + "WHERE fi.favorite.id IN :favoriteIds")
   List<FavoriteItem> findByFavoriteIdsWithProduct(@Param("favoriteIds") List<Long> favoriteIds);
 
