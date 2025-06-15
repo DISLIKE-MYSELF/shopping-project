@@ -28,6 +28,19 @@ F->>SecurityContext: setAuthentication()
 F-->>C: Continue to controller
 ```
 
+### 异常返回
+
+若操作存在异常，返回的数据结构如下：
+
+`ErrorResponse`
+
++ error: String 异常类型
++ message: String 异常信息
++ path: String 异常接口
++ details: List\<String\>  详细异常详细，只有在出现 ValidationException 时才不为空
+
+# API
+
 **注意：带*的 api 存在权限问题，目前尚未加入权限验证，因此不应使用**
 
 ## 用户（User）
