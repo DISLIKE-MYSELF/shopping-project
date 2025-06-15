@@ -126,14 +126,27 @@ F-->>C: Continue to controller
 
 ### 获取所有商品信息（简略）
 
-* `GET /api/products`
-* `ProductCardsResponse`
+**GET** `/api/products`
 
-### 创建商品
+请求体：无
 
-*  `POST /api/products`
-*  `CreateProductRequest`
-* 请求体：
+返回数据
+
++ 状态码：成功（200 *ok*）；
+
++ 数据：`ProductCardsResponse`
+
+### 获取指定商品信息（详细）
+
+**GET** `/api/products/{productId}`
+
+*  `ProductResponse`
+
+### *创建商品
+
+**POST** `/api/products`
+
+请求体：`CreateProductRequest`
 
 ```json
 {
@@ -147,22 +160,37 @@ F-->>C: Continue to controller
 }
 ```
 
-### 获取指定商品
+返回数据
 
-*  `GET /api/products/{productId}`
-*  `ProductResponse`
++ 状态码：成功（200 *ok*）；校验失败（400 *Bad Request*）
 
-### 更新商品
++ 数据：`ProductCardsResponse`
 
-*  `POST /api/products/{productId}`
-*  `UpdateProductRequest`
+### *更新商品
 
-+ 请求体：同创建商品
+**POST** `/api/products/{productId}`
 
-### 删除商品
+请求体：`UpdateProductRequest`
 
-*  `DELETE /api/products/{productId}`
-*  `DeleteProductRequest`
++ 同创建商品
+
+返回数据
+
++ 状态码：成功（200 *ok*）；校验失败（400 *Bad Request*）
+
++ 数据：`ProductCardsResponse`
+
+### *删除商品
+
+**DELETE** `/api/products/{productId}`
+
+请求体：`DeleteProductRequest`
+
+返回数据
+
+- 状态码：成功（204 *NoContent*）；
+
+- 数据：空
 
 ---
 
@@ -225,7 +253,7 @@ F-->>C: Continue to controller
 
 返回数据
 
-- 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+- 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）；超过库存（400 *Bad Request*）
 
 - 数据：`CartResponse`
 
@@ -369,7 +397,7 @@ F-->>C: Continue to controller
 
 *  数据：`List<OrderResponse>`
 
-### 创建订单
+### 创建订单（通过购物车项列表）
 
 **POST** `/api/orders/my-orders`
 
@@ -383,7 +411,7 @@ F-->>C: Continue to controller
 
 返回数据
 
-+ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
++ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）；列表为空（400 *Bad Request*）
 
 + 数据：`OrderResponse`
 
@@ -401,7 +429,7 @@ F-->>C: Continue to controller
 
 返回数据
 
-+ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
++ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）；未知状态（400 *Bad Request*）
 
 + 数据：`OrderResponse`
 

@@ -1,45 +1,54 @@
 package com.example.backend.controller;
 
-import com.example.backend.model.Product;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.example.backend.dto.request.CreateProductRequest;
+import com.example.backend.dto.request.UpdateProductRequest;
+import com.example.backend.dto.response.ProductCardsResponse;
+import com.example.backend.dto.response.ProductResponse;
 import com.example.backend.service.ProductService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/products")
+@AllArgsConstructor
 public class ProductController {
 
-    private final ProductService productService;
+  private final ProductService productService;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+  @GetMapping
+  public ResponseEntity<ProductCardsResponse> getAllProducts() {
+    return ResponseEntity.ok().body(productService.getAllProducts());
+  }
 
-    @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
+    return ResponseEntity.ok().body(productService.getProductById(id));
+  }
 
-    @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        return productService.createProduct(product);
-    }
+  @PostMapping
+  public ResponseEntity<ProductResponse> createProduct(
+      @RequestBody @Valid CreateProductRequest request) {
+    return ResponseEntity.ok().body(productService.createProduct(request));
+  }
 
-    @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id) {
-        return productService.getProductById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-    }
+  @PostMapping("/{id}")
+  public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id,
+      @RequestBody @Valid UpdateProductRequest request) {
+    return ResponseEntity.ok().body(productService.updateProduct(id, request));
+  }
 
-    @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
-        return productService.updateProduct(id, updatedProduct);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
-    }
+  @DeleteMapping("/{id}")
+  public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+    productService.deleteProduct(id);
+    return ResponseEntity.noContent().build();
+  }
 }
 

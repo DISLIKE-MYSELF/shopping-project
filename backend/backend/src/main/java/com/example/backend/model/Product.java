@@ -33,7 +33,7 @@ public class Product {
   private String description;
 
   // 商品类别
-  @Column(nullable = false, length = 50)
+  @Column(length = 50)
   private String category;
 
   // 商品库存
