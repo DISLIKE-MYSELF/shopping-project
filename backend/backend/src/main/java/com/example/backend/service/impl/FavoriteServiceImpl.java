@@ -116,7 +116,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     favorite.setUpdatedAt(LocalDateTime.now());
 
     // 返回更新后的收藏夹
-    return getFavoriteResponse(favoriteRepository.save(favorite));
+    return getFavoriteResponse(favoriteRepository.saveAndFlush(favorite));
   }
 
   @Override
@@ -181,7 +181,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     // 更新收藏夹时间
     favorite.setUpdatedAt(LocalDateTime.now());
 
-    return getFavoriteResponse(favoriteRepository.save(favorite));
+    return getFavoriteResponse(favoriteRepository.saveAndFlush(favorite));
   }
 
   @Override

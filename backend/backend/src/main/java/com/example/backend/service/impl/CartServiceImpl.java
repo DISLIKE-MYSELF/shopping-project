@@ -44,6 +44,7 @@ public class CartServiceImpl implements CartService {
     return cartMapper.toCartResponse(cart, cartItems);
   }
 
+  // 增加购物车
   @Override
   @Transactional
   public CartResponse createCart(String username) {
@@ -54,6 +55,7 @@ public class CartServiceImpl implements CartService {
     return getCartResponse(cartRepository.save(cart));
   }
 
+  // 删除指定购物车
   @Override
   @Transactional
   public void deleteCartById(String username, Long cartId) {
@@ -74,6 +76,7 @@ public class CartServiceImpl implements CartService {
     cartRepository.deleteById(cartId);
   }
 
+  // 添加购物车项
   @Override
   @Transactional
   public CartResponse addToCart(String username, Long cartId, AddCartItemRequest request) {
@@ -107,7 +110,7 @@ public class CartServiceImpl implements CartService {
       // 更新现有项
       CartItem item = existingItem.get();
       item.setQuantity(request.quantity());
-      cartItemRepository.save(item);
+      cartItemRepository.saveAndFlush(item);
     } else {
       // 创建新项
       CartItem newItem = new CartItem();
@@ -122,9 +125,10 @@ public class CartServiceImpl implements CartService {
     cart.setUpdatedAt(LocalDateTime.now());
 
     // 返回更新后的购物车
-    return getCartResponse(cartRepository.save(cart));
+    return getCartResponse(cartRepository.saveAndFlush(cart));
   }
 
+  // 获取用户购物车
   @Override
   public List<CartResponse> getCartsByUserId(Long userId) {
     // 获取用户的所有购物车
@@ -214,9 +218,11 @@ public class CartServiceImpl implements CartService {
 
     cartItem.setQuantity(request.quantity());
 
+    cartItemRepository.saveAndFlush(cartItem);
+
     cart.setUpdatedAt(LocalDateTime.now());
 
-    return getCartResponse(cartRepository.save(cart));
+    return getCartResponse(cartRepository.saveAndFlush(cart));
   }
 
   @Override

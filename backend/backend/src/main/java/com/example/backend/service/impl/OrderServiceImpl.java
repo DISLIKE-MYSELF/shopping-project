@@ -150,6 +150,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     order.setStatus(status);
-    return getOrderResponse(orderRepository.save(order));
+    return getOrderResponse(orderRepository.saveAndFlush(order));
   }
 }

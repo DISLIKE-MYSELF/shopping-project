@@ -76,7 +76,7 @@ public class ProductServiceImpl implements ProductService {
       product.setRating(request.rating());
     }
 
-    return productMapper.toProductResponse(productRepository.save(product));
+    return productMapper.toProductResponse(productRepository.saveAndFlush(product));
   }
 
   @Override
