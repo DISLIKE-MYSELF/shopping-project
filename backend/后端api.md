@@ -61,7 +61,7 @@ F-->>C: Continue to controller
 
 返回数据
 
-+ 状态码：成功（201 *created*）；失败（400 *Bad Request*）；
++ 状态码：成功（200 *ok*）；失败（400 *Bad Request*）；
 + 数据：`RegisterResponse` （redirectUrl）
 
 ### 登录

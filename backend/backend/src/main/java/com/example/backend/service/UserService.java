@@ -1,7 +1,10 @@
 package com.example.backend.service;
 
 import java.util.List;
+import com.example.backend.dto.request.LoginRequest;
+import com.example.backend.dto.request.RegisterRequest;
 import com.example.backend.dto.response.LoginResponse;
+import com.example.backend.dto.response.RegisterResponse;
 import com.example.backend.dto.response.UserProfileResponse;
 import com.example.backend.model.User;
 
@@ -10,21 +13,15 @@ public interface UserService {
 
   List<User> getAllUsers();
 
-  boolean existsByUsername(String username);
-
   User getUserByUsername(String username);
 
-  User getUserById(Long id);
-
-  User getUserByEmail(String email);
-
-  UserProfileResponse getUserProfileById(Long userId);
+  UserProfileResponse getUserProfileById(Long id);
 
   UserProfileResponse getUserProfileByUsername(String username);
 
-  User register(User user);
+  RegisterResponse register(RegisterRequest request);
 
-  LoginResponse login(String username, String password);
+  LoginResponse login(LoginRequest request);
 
   void deleteUserByUsername(String username);
 }

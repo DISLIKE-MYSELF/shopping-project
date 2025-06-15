@@ -86,7 +86,7 @@ class UserControllerTest {
           "username": "testuser1",
           "email": "test1@example.com",
           "password": "password"
-        }""").andExpect(status().isCreated()).andReturn();
+        }""").andExpect(status().isOk()).andReturn();
 
     User user = userRepository.findByUsername("testuser1").orElse(null);
     assertNotNull(user);

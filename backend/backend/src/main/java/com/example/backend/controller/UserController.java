@@ -1,11 +1,9 @@
 package com.example.backend.controller;
 
-import java.net.URI;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,24 +27,17 @@ import lombok.AllArgsConstructor;
 public class UserController {
 
   private final UserService userService;
-  private final PasswordEncoder passwordEncoder;
 
   // 注册
   @PostMapping("/register")
   public ResponseEntity<RegisterResponse> register(@RequestBody @Valid RegisterRequest request) {
-    User user = new User();
-    user.setUsername(request.username());
-    user.setEmail(request.email());
-    user.setPassword(passwordEncoder.encode(request.password()));
-    userService.register(user);
-
-    return ResponseEntity.created(URI.create("/users/" + user.getId())).build();
+    return ResponseEntity.ok().body(userService.register(request));
   }
 
   // 登录
   @PostMapping("/login")
   public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
-    return ResponseEntity.ok(userService.login(request.username(), request.password()));
+    return ResponseEntity.ok(userService.login(request));
   }
 
   // @GetMapping("/current")

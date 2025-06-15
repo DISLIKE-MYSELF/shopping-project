@@ -7,9 +7,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.backend.dto.request.LoginRequest;
+import com.example.backend.dto.request.RegisterRequest;
 import com.example.backend.dto.response.LoginResponse;
+import com.example.backend.dto.response.RegisterResponse;
 import com.example.backend.dto.response.UserProfileResponse;
 import com.example.backend.exception.BusinessException;
 import com.example.backend.exception.EntityNotFoundException;
@@ -29,22 +33,11 @@ public class UserServiceImpl implements UserService {
   private final AuthenticationManager authenticationManager;
   private final JwtUtils jwtUtils;
   private final UserMapper userMapper;
-
-  @Override
-  public boolean existsByUsername(String username) {
-    return userRepository.existsByUsername(username);
-  }
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   public List<User> getAllUsers() {
     return userRepository.findAll();
-  }
-
-  @Override
-  public User getUserById(Long id) {
-    User user =
-        userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
-    return user;
   }
 
   @Override
@@ -55,16 +48,9 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User getUserByEmail(String email) {
-    User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new EntityNotFoundException("User", email));
-    return user;
-  }
-
-  @Override
-  public UserProfileResponse getUserProfileById(Long userId) {
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new EntityNotFoundException("User", userId));
+  public UserProfileResponse getUserProfileById(Long id) {
+    User user =
+        userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User", id));
     return userMapper.toUserProfileResponse(user);
   }
 
@@ -77,28 +63,33 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public User register(User user) {
-    if (userRepository.existsByUsername(user.getUsername())) {
+  public RegisterResponse register(RegisterRequest request) {
+    if (userRepository.existsByUsername(request.username())) {
       throw new BusinessException("用户名已存在");
     }
 
-    if (userRepository.existsByEmail(user.getEmail())) {
+    if (userRepository.existsByEmail(request.email())) {
       throw new BusinessException("邮箱已存在");
     }
 
-    return userRepository.save(user);
+    User user = new User();
+    user.setUsername(request.username());
+    user.setEmail(request.email());
+    user.setPassword(passwordEncoder.encode(request.password()));
+    userRepository.save(user);
+    return new RegisterResponse(user.getId());
   }
 
   @Override
   @Transactional
-  public LoginResponse login(String username, String password) {
-    if (!userRepository.existsByUsername(username)) {
-      throw new EntityNotFoundException("User", username);
+  public LoginResponse login(LoginRequest request) {
+    if (!userRepository.existsByUsername(request.username())) {
+      throw new EntityNotFoundException("User", request.username());
     }
     try {
       // 认证用户凭证
-      Authentication authentication = authenticationManager
-          .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+      Authentication authentication = authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(request.username(), request.password()));
 
       // 生成JWT令牌
       UserDetails userDetails = (UserDetails) authentication.getPrincipal();

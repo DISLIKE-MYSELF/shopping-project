@@ -1,6 +1,6 @@
 package com.example.backend.dto.response;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-public record RegisterResponse(@NotBlank String redirectedUrl) {
+public record RegisterResponse(@NotNull Long userId) {
 }
