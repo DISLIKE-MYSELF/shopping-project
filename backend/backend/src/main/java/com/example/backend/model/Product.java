@@ -1,60 +1,73 @@
 package com.example.backend.model;
 
-import jakarta.persistence.*;
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "products")
+@Data
 public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String name;
+  // 商品名
+  @Column(nullable = false, length = 100)
+  private String name;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+  // 商品价格
+  @Column(nullable = false, precision = 10, scale = 2)
+  private BigDecimal price;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+  // 商品描述
+  @Column(columnDefinition = "TEXT")
+  private String description;
 
-    private Integer stock;
+  // 商品类别
+  @Column(nullable = false, length = 50)
+  private String category;
 
-    @Column(name = "created_at")
-    private Timestamp createdAt;
+  // 商品库存
+  @Column(nullable = false)
+  private Integer stock;
 
-    @Column(name = "updated_at")
-    private Timestamp updatedAt;
+  // 商品图片
+  @Column(length = 50)
+  private String image;
 
-    // Getter & Setter
-    public Long getId() { return id; }
+  // 商品评分
+  @Column(precision = 2, scale = 1)
+  private BigDecimal rating;
 
-    public void setId(Long id) { this.id = id; }
+  // 创建时间
+  @Column(name = "created_at")
+  private Timestamp createdAt;
 
-    public String getName() { return name; }
+  // 更新时间
+  @Column(name = "updated_at")
+  private Timestamp updatedAt;
 
-    public void setName(String name) { this.name = name; }
+  @PrePersist
+  public void prePersist() {
+    if (createdAt == null) {
+      createdAt = new Timestamp(System.currentTimeMillis());
+    }
+    if (updatedAt == null) {
+      updatedAt = createdAt;
+    }
+  }
 
-    public String getDescription() { return description; }
-
-    public void setDescription(String description) { this.description = description; }
-
-    public BigDecimal getPrice() { return price; }
-
-    public void setPrice(BigDecimal price) { this.price = price; }
-
-    public Integer getStock() { return stock; }
-
-    public void setStock(Integer stock) { this.stock = stock; }
-
-    public Timestamp getCreatedAt() { return createdAt; }
-
-    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
-
-    public Timestamp getUpdatedAt() { return updatedAt; }
-
-    public void setUpdatedAt(Timestamp updatedAt) { this.updatedAt = updatedAt; }
+  @PreUpdate
+  public void preUpdate() {
+    updatedAt = new Timestamp(System.currentTimeMillis());
+  }
 }

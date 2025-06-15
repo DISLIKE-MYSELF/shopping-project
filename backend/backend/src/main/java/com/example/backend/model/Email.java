@@ -1,53 +1,46 @@
 package com.example.backend.model;
 
-import jakarta.persistence.*;
-
 import java.sql.Timestamp;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "emails")
+@Data
 public class Email {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    // 与用户建立关联
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  // 与用户建立关联
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @Column(nullable = false, length = 255)
-    private String subject;
+  // 邮件主题
+  @Column(nullable = false, length = 255)
+  private String subject;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
+  // 邮件内容
+  @Column(nullable = false, columnDefinition = "TEXT")
+  private String content;
 
-    @Column(name = "sent_at")
-    private Timestamp sentAt;
+  // 发送时间
+  @Column(name = "sent_at")
+  private Timestamp sentAt;
 
-    @PrePersist
-    public void prePersist() {
-        this.sentAt = new Timestamp(System.currentTimeMillis());
+  @PrePersist
+  public void prePersist() {
+    if (sentAt == null) {
+      sentAt = new Timestamp(System.currentTimeMillis());
     }
-
-    // Getters & Setters
-    public Long getId() { return id; }
-
-    public void setId(Long id) { this.id = id; }
-
-    public User getUser() { return user; }
-
-    public void setUser(User user) { this.user = user; }
-
-    public String getSubject() { return subject; }
-
-    public void setSubject(String subject) { this.subject = subject; }
-
-    public String getContent() { return content; }
-
-    public void setContent(String content) { this.content = content; }
-
-    public Timestamp getSentAt() { return sentAt; }
-
-    public void setSentAt(Timestamp sentAt) { this.sentAt = sentAt; }
+  }
 }

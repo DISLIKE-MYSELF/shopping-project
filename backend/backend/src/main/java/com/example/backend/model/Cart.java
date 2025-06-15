@@ -1,55 +1,44 @@
 package com.example.backend.model;
 
-import jakarta.persistence.*;
-
 import java.sql.Timestamp;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "carts")
+@Data
 public class Cart {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    // 与用户关联
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  // 与用户关联
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    // 与商品关联
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+  // 更新时间
+  @Column(name = "updated_at")
+  private Timestamp updatedAt;
 
-    @Column(nullable = false)
-    private Integer quantity;
-
-    @Column(name = "created_at")
-    private Timestamp createdAt;
-
-    @PrePersist
-    public void prePersist() {
-        createdAt = new Timestamp(System.currentTimeMillis());
+  @PrePersist
+  public void prePersist() {
+    if (updatedAt == null) {
+      updatedAt = new Timestamp(System.currentTimeMillis());
     }
+  }
 
-    // Getters & Setters
-    public Long getId() { return id; }
-
-    public void setId(Long id) { this.id = id; }
-
-    public User getUser() { return user; }
-
-    public void setUser(User user) { this.user = user; }
-
-    public Product getProduct() { return product; }
-
-    public void setProduct(Product product) { this.product = product; }
-
-    public Integer getQuantity() { return quantity; }
-
-    public void setQuantity(Integer quantity) { this.quantity = quantity; }
-
-    public Timestamp getCreatedAt() { return createdAt; }
-
-    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+  @PreUpdate
+  public void preUpdate() {
+    updatedAt = new Timestamp(System.currentTimeMillis());
+  }
 }

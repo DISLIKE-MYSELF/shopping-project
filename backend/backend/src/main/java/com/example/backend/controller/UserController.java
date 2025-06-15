@@ -1,52 +1,84 @@
 package com.example.backend.controller;
 
+import java.net.URI;
+import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.example.backend.dto.request.LoginRequest;
+import com.example.backend.dto.request.RegisterRequest;
+import com.example.backend.dto.response.LoginResponse;
+import com.example.backend.dto.response.RegisterResponse;
+import com.example.backend.dto.response.UserProfileResponse;
 import com.example.backend.model.User;
 import com.example.backend.service.UserService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/users")
+@AllArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+  private final UserService userService;
+  private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+  // 注册
+  @PostMapping("/register")
+  public ResponseEntity<RegisterResponse> register(@RequestBody @Valid RegisterRequest request) {
+    User user = new User();
+    user.setUsername(request.username());
+    user.setEmail(request.email());
+    user.setPassword(passwordEncoder.encode(request.password()));
+    userService.register(user);
 
-    // 获取所有用户
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
-    }
+    return ResponseEntity.created(URI.create("/users/" + user.getId())).build();
+  }
 
-    // 注册用户
-    @PostMapping
-    public User registerUser(@RequestBody User user) {
-        return userService.registerUser(user);
-    }
+  // 登录
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
+    return ResponseEntity.ok(userService.login(request.username(), request.password()));
+  }
 
-    // 根据 ID 获取用户
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
+  // @GetMapping("/current")
+  // public ResponseEntity<UserProfileResponse> getCurrentUser(
+  // @RequestHeader("Authorization") String token) {
+  // String username = jwtUtils.getUsernameFromToken(token);
+  // return ResponseEntity.ok(userService.getUserProfileByUsername(username));
+  // }
 
-    // 登录
-    @PostMapping("/login")
-    public User login(@RequestBody User user) {
-        return userService.login(user.getUsername(), user.getPassword())
-                .orElseThrow(() -> new RuntimeException("用户名或密码错误"));
-    }
+  // 获取当前用户信息
+  @GetMapping("/current")
+  public ResponseEntity<UserProfileResponse> getCurrentUser(
+      @AuthenticationPrincipal UserDetails userDetails) {
+    return ResponseEntity.ok(userService.getUserProfileByUsername(userDetails.getUsername()));
+  }
 
+  // 删除当前用户
+  @DeleteMapping("/current")
+  public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
+    userService.deleteUserByUsername(userDetails.getUsername());
+    return ResponseEntity.noContent().build();
+  }
 
+  // 根据 ID 获取用户信息
+  @GetMapping("/{id}")
+  public UserProfileResponse getUserById(@PathVariable Long id) {
+    return userService.getUserProfileById(id);
+  }
 
-    // 删除用户
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-    }
+  // 获取所有用户
+  @GetMapping
+  public ResponseEntity<List<User>> getAllUsers() {
+    return ResponseEntity.ok(userService.getAllUsers());
+  }
 }

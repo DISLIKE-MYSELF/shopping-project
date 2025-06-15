@@ -1,0 +1,464 @@
+# 后端接口文档
+
+### 身份验证流程图
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant CT as Controller
+    participant AM as AuthManager
+    participant UD as UserDetails
+    participant JW as JwtUtils
+    participant F as JwtFilter
+
+C->>CT: POST /login (username/password)
+CT->>AM: authenticate()
+AM->>UD: loadUserByUsername()
+UD-->>AM: UserDetails
+AM-->>CT: Authentication
+CT->>JW: generateToken()
+JW-->>CT: JWT
+CT-->>C: Return JWT
+
+C->>F: Request with JWT
+F->>JW: validateToken()
+JW-->>F: true/false
+F->>UD: loadUserByUsername()
+F->>SecurityContext: setAuthentication()
+F-->>C: Continue to controller
+```
+
+**注意：带*的 api 存在权限问题，目前尚未加入权限验证，因此不应使用**
+
+## 用户（User）
+
+### 注册
+
+**POST** `/api/users/register`
+
+请求体：`RegisterRequest`
+
+```json
+{
+	"username": "user1",
+  "password": "password",
+  "email": "user1@example.com"
+}
+```
+
+返回数据
+
++ 状态码：成功（201 *created*）；失败（400 *Bad Request*）；
++ 数据：`RegisterResponse` （redirectUrl）
+
+### 登录
+
+**POST** ` /api/users/login`
+
+请求体：`LoginRequest`
+
+```json
+{
+  "username": "user1",
+  "password": "password1"
+}
+```
+
+返回数据
+
++ 状态码：成功（200 *ok*）；密码错误（401 *Unauthorized*）；用户不存在（404 *NotFound*）
++ 数据：`LoginResponse` （token）
+
+### 获取当前用户信息
+
+需在登录状态下访问，即请求头需包含token
+
+**GET** `/api/users/current`
+
+请求体：无
+
+返回数据
+
++ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
++ 数据：`UserProfileResponse`
+
+### 删除当前用户
+
+需在登录状态下访问，即请求头需包含token
+
+**DELETE** `/api/users/current`
+
+请求体：无
+
+返回数据
+
++ 状态码：成功（204 *NoContent*）；未登录（403 *Forbidden*）
+
++ 数据：空
+
+### *获取指定用户信息
+
+*  `GET /api/users/{userId}`
+*  `User`
+
+### *获取所有用户
+
+* `GET /api/users`
+* `List<Users>`
+
+---
+
+## 商品（Product）
+
+### 获取所有商品信息（简略）
+
+* `GET /api/products`
+* `ProductCardsResponse`
+
+### 创建商品
+
+*  `POST /api/products`
+*  `CreateProductRequest`
+* 请求体：
+
+```json
+{
+  "name": "iPhone 15",
+  "image": "image",
+  "price": 7999.00,
+  "stock": 3,
+  "description": "苹果最新手机",
+  "category"?: "category",
+  "rating"?: 3.5
+}
+```
+
+### 获取指定商品
+
+*  `GET /api/products/{productId}`
+*  `ProductResponse`
+
+### 更新商品
+
+*  `POST /api/products/{productId}`
+*  `UpdateProductRequest`
+
++ 请求体：同创建商品
+
+### 删除商品
+
+*  `DELETE /api/products/{productId}`
+*  `DeleteProductRequest`
+
+---
+
+## 购物车（Cart）
+
+该模块的所有 api 都必须在在登录状态下访问，即请求头需包含 token，否则返回 403 *Forbidden*
+
+### 获取某用户的所有购物车
+
+**GET** `/api/carts/my-carts`
+
+返回数据
+
++ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
+*  数据：`List<CartResponse>`
+
+### 增加购物车
+
+**POST** `/api/carts/my-carts`
+
+请求体：空
+
+返回数据
+
++ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
++ 数据：`CartResponse`
+
+### 添加购物车项
+
+**POST** `/api/carts/{cartId}/items`
+
+请求体：`AddCartItemRequest`
+
+```json
+{
+  "productId": 2,
+  "quantity": 3
+}
+```
+
+返回数据
+
++ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
++ 数据：`CartResponse`
+
+### 更新购物车项
+
+**POST** `/api/carts/{cartId}/items/{cartItemId}`
+
+请求体：`UpdateCartItemRequest`
+
+``` json
+{
+  "quantity": 3
+}
+```
+
+返回数据
+
+- 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
+- 数据：`CartResponse`
+
+### 删除单个购物车项
+
+**DELETE** `/api/carts/{cartId}/items/{cartItemId}`
+
+请求体：无
+
+返回数据
+
+- 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
+- 数据：`CartResponse`
+
+### 清空购物车
+
+**DELETE** `/api/carts/{cartId}/items`
+
+请求体：无
+
+返回数据
+
+- 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
+- 数据：`CartResponse`
+
+### 删除购物车
+
+**DELETE** `/api/carts/{cartId}`
+
+请求体：无
+
+返回数据
+
+- 状态码：成功（204 *NoContent*）；未登录（403 *Forbidden*）
+
+- 数据：空
+
+---
+
+## 收藏夹（Favorite）
+
+该模块的所有 api 都必须在在登录状态下访问，即请求头需包含 token，否则返回 403 *Forbidden*
+
+### 获取某用户的所有收藏夹
+
+**GET** `/api/favorites/my-favorites`
+
+返回数据
+
++ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
+*  数据：`List<FavoriteResponse>`
+
+### 增加收藏夹
+
+**POST** `/api/favorites/my-favorites`
+
+请求体：`CreateFavoriteRequest`
+
+```json
+{
+  "name": "favorite1"
+}
+```
+
+返回数据
+
++ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
++ 数据：`FavoriteResponse`
+
+### 添加收藏夹项
+
+**POST** `/api/favorites/{favoriteId}/items`
+
+请求体：`AddFavoriteItemRequest`
+
+```json
+{
+  "productId": 2,
+}
+```
+
+返回数据
+
++ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
++ 数据：`FavoriteResponse`
+
+### 删除单个收藏夹项
+
+**DELETE** `/api/favorites/{favoriteId}/items/{favoriteItemId}`
+
+请求体：无
+
+返回数据
+
+- 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
+- 数据：`FavoriteResponse`
+
+### 清空收藏夹
+
+**DELETE** `/api/favorites/{favoriteId}/items`
+
+请求体：无
+
+返回数据
+
+- 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
+- 数据：`FavoriteRResponse`
+
+### 删除收藏夹
+
+**DELETE** `/api/favorites/{favoriteId}`
+
+请求体：无
+
+返回数据
+
+- 状态码：成功（204 *NoContent*）；未登录（403 *Forbidden*）
+
+- 数据：空
+
+---
+
+## 订单（Order）
+
+### 获取某用户所有订单
+
+*  `GET /api/users/{userId}/orders`
+
+### 获取平台所有订单
+
++ `GET /api/orders`
+
+### 获取指定订单
+
+*  `GET /api/orders/{orderId}`
+
+### 创建订单
+
+* `POST /api/orders`
+* 请求体：
+
+```json
+{
+  "userId": 1,
+  "orderItems": cartItemId[],
+  "status"?: "pending"
+}
+```
+
+### 更新订单状态
+
+* `POST /api/orders/{orderId}/status`
+
+- 请求体：
+
+```json
+ {
+   "status": "paid"
+ }
+```
+
+### 删除订单
+
+* `DELETE /api/orders/{orderId}`
+
+---
+
+## 支付（Payment）
+
+### 获取某用户所有支付记录
+
++  `GET /api/users/{userId}/payments`
+
+### 获取平台所有支付记录
+
+*  `GET /api/payments`
+
+### 获取指定支付记录
+
++ `GET /api/payments/{paymentId}`
+
+### 获取某订单的支付记录
+
++ `GET /api/orders/{orderId}/payment`
+
+### 创建支付记录
+
++ `POST /api/payments`
+
+- 请求体：
+
+```json
+ {
+   "orderId": 1,
+   "amount": 10000,
+   "paymentMethod": "alipay",
+   "status"?: "pending"
+ }
+```
+
+### 更新支付状态
+
++ `POST /api/payments/{paymentId}/callback`
+
+```json
+ {
+   "status": "paid"
+ }
+```
+
+---
+
+## 邮件（Email）
+
+### 获取平台所有邮件
+
+*  `GET /api/emails`
+
+### 获取指定邮件
+
++  `GET /api/emails/{emailId}`
+
+### 获取某用户的邮件记录
+
+*  `GET /api/user/{userId}/emails`
+
+### 发送邮件（添加记录）
+
+*  `POST /api/emails`
+* 请求体：
+
+```json
+{
+  "userId": 1,
+  "subject": "订单已发货",
+  "content": "您的订单已发货，请注意查收"
+}
+```
+
+### 删除邮件记录
+
+*  `DELETE /api/emails/{emailId}`

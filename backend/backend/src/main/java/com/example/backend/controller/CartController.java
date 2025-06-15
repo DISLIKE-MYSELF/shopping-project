@@ -1,37 +1,80 @@
 package com.example.backend.controller;
 
-import com.example.backend.model.Cart;
-import com.example.backend.service.CartService;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.example.backend.dto.request.AddCartItemRequest;
+import com.example.backend.dto.request.UpdateCartItemRequest;
+import com.example.backend.dto.response.CartResponse;
+import com.example.backend.service.CartService;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/carts")
+@AllArgsConstructor
 public class CartController {
 
-    private final CartService cartService;
-    public CartController(CartService cartService) {
-        this.cartService = cartService;
-    }
+  private final CartService cartService;
 
-    @GetMapping("/user/{userId}")
-    public List<Cart> getCartByUser(@PathVariable Long userId) {
-        return cartService.getCartByUserId(userId);
-    }
+  // 获取用户所有购物车
+  @GetMapping("/my-carts")
+  public ResponseEntity<List<CartResponse>> getAllCarts(
+      @AuthenticationPrincipal UserDetails userDetails) {
+    return ResponseEntity.ok(cartService.getCartsByUsername(userDetails.getUsername()));
+  }
 
-    @PostMapping
-    public Cart addToCart(@RequestBody Cart cart) {
-        return cartService.addToCart(cart);
-    }
+  // 增加购物车
+  @PostMapping("/my-carts")
+  public ResponseEntity<CartResponse> createCart(@AuthenticationPrincipal UserDetails userDetails) {
+    return ResponseEntity.ok(cartService.createCart(userDetails.getUsername()));
+  }
 
-    @DeleteMapping("/user/{userId}")
-    public void clearCart(@PathVariable Long userId) {
-        cartService.clearCartByUserId(userId);
-    }
+  // 添加购物车项
+  @PostMapping("/{cartId}/items")
+  public ResponseEntity<CartResponse> addToCart(@AuthenticationPrincipal UserDetails userDetails,
+      @PathVariable Long cartId, @RequestBody @Valid AddCartItemRequest request) {
+    return ResponseEntity.ok(cartService.addToCart(userDetails.getUsername(), cartId, request));
+  }
 
-    @DeleteMapping("/{id}")
-    public void deleteCartItem(@PathVariable Long id) {
-        cartService.deleteCartItem(id);
-    }
+  // 更新购物车项
+  @PostMapping("/{cartId}/items/{cartItemId}")
+  public ResponseEntity<CartResponse> updateCartItem(
+      @AuthenticationPrincipal UserDetails userDetails, @PathVariable Long cartId,
+      @PathVariable Long cartItemId, @RequestBody @Valid UpdateCartItemRequest request) {
+    return ResponseEntity
+        .ok(cartService.updateCartItem(userDetails.getUsername(), cartId, cartItemId, request));
+  }
+
+  // 删除单个购物车项
+  @DeleteMapping("/{cartId}/items/{cartItemId}")
+  public ResponseEntity<CartResponse> deleteCartItem(
+      @AuthenticationPrincipal UserDetails userDetails, @PathVariable Long cartId,
+      @PathVariable Long cartItemId) {
+    return ResponseEntity
+        .ok(cartService.deleteCartItem(userDetails.getUsername(), cartId, cartItemId));
+  }
+
+  // 清空购物车
+  @DeleteMapping("/{cartId}/items")
+  public ResponseEntity<CartResponse> clearCart(@AuthenticationPrincipal UserDetails userDetails,
+      @PathVariable Long cartId) {
+    return ResponseEntity.ok(cartService.clearCart(userDetails.getUsername(), cartId));
+  }
+
+  // 删除购物车
+  @DeleteMapping("/{cartId}")
+  public ResponseEntity<?> deleteCart(@AuthenticationPrincipal UserDetails userDetails,
+      @PathVariable Long cartId) {
+    cartService.deleteCartById(userDetails.getUsername(), cartId);
+    return ResponseEntity.noContent().build();
+  }
 }
