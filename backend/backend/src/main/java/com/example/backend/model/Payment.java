@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,7 +39,8 @@ public class Payment {
 
   // 支付状态
   @Column(length = 20)
-  private String status;
+  @Enumerated(EnumType.STRING)
+  PaymentStatus status;
 
   // 支付时间
   @Column(name = "payment_time")
@@ -54,7 +57,7 @@ public class Payment {
   @PrePersist
   public void prePersist() {
     if (status == null) {
-      status = "pending";
+      status = PaymentStatus.PENDING;
     }
     if (createdAt == null) {
       createdAt = new Timestamp(System.currentTimeMillis());
@@ -67,5 +70,8 @@ public class Payment {
   @PreUpdate
   public void preUpdate() {
     this.updatedAt = new Timestamp(System.currentTimeMillis());
+    if (this.status.equals(PaymentStatus.PAIED)) {
+      this.paymentTime = updatedAt;
+    }
   }
 }

@@ -198,7 +198,7 @@ F-->>C: Continue to controller
 
 该模块的所有 api 都必须在在登录状态下访问，即请求头需包含 token，否则返回 403 *Forbidden*
 
-### 获取某用户的所有购物车
+### 获取登录用户的所有购物车
 
 **GET** `/api/carts/my-carts`
 
@@ -299,7 +299,7 @@ F-->>C: Continue to controller
 
 该模块的所有 api 都必须在在登录状态下访问，即请求头需包含 token，否则返回 403 *Forbidden*
 
-### 获取某用户的所有收藏夹
+### 获取登录用户的所有收藏夹
 
 **GET** `/api/favorites/my-favorites`
 
@@ -317,7 +317,7 @@ F-->>C: Continue to controller
 
 ```json
 {
-  "name": "favorite1"
+  "name"?: "favorite1"
 }
 ```
 
@@ -387,7 +387,7 @@ F-->>C: Continue to controller
 
 该模块的所有 api 都必须在在登录状态下访问，即请求头需包含 token，否则返回 403 *Forbidden*
 
-### 获取某用户所有订单
+### 获取登录用户所有订单
 
 **GET** `/api/orders/my-orders`
 
@@ -453,27 +453,49 @@ F-->>C: Continue to controller
 
 ## 支付（Payment）
 
-### 获取某用户所有支付记录
+该模块的所有 api 都必须在在登录状态下访问，即请求头需包含 token，否则返回 403 *Forbidden*
 
-+  `GET /api/users/{userId}/payments`
+### 获取登录用户所有支付记录
 
-### 获取平台所有支付记录
+**GET** `/api/payments/my-payments`
 
-*  `GET /api/payments`
+请求体：无
+
+返回数据
+
+- 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
+- 数据：`List<PaymentResponse>`
 
 ### 获取指定支付记录
 
-+ `GET /api/payments/{paymentId}`
+**GET** `/api/payments/{paymentId}`
+
+请求体：无
+
+返回数据
+
+- 状态码：成功（200 *ok*）；支付记录不存在（404 *Not Found*）；未登录（403 *Forbidden*）
+
+- 数据：`PaymentResponse`
 
 ### 获取某订单的支付记录
 
-+ `GET /api/orders/{orderId}/payment`
+**GET** `/api/payments/orders/{orderId}`
+
+请求体：无
+
+返回数据
+
+- 状态码：成功（200 *ok*）；订单或支付记录不存在（404 *Not Found*）；未登录（403 *Forbidden*）
+
+- 数据：`PaymentResponse`
 
 ### 创建支付记录
 
-+ `POST /api/payments`
+**POST** `/api/payments`
 
-- 请求体：
+请求体：`CreatePaymentRequest`
 
 ```json
  {
@@ -484,15 +506,45 @@ F-->>C: Continue to controller
  }
 ```
 
+返回数据
+
+- 状态码：成功（200 *ok*）；订单不存在（404 *Not Found*）；校验失败（400 *Bad Request*）；未登录（403 *Forbidden*）
+
+- 数据：`PaymentResponse`
+
 ### 更新支付状态
 
-+ `POST /api/payments/{paymentId}/callback`
+**POST** `/api/payments/{paymentId}/status`
+
+请求体：`UpdatePaymentRequest`
 
 ```json
  {
-   "status": "paid"
+   "status": "paied"
  }
 ```
+
+返回数据
+
+- 状态码：成功（200 *ok*）；支付记录不存在（404 *Not Found*）；未知状态（400 *Bad Request*）；未登录（403 *Forbidden*）
+
+- 数据：`PaymentResponse`
+
+### 删除支付记录
+
+DELETE `/api/payments/{paymentId}`
+
+请求体：无
+
+返回数据
+
+- 状态码：成功（204 *NoContent*）；未登录（403 *Forbidden*）；权限问题（401 *Unauthorized*）
+
+- 数据：空
+
+### *获取平台所有支付记录
+
+**GET** `/api/payments`
 
 ---
 

@@ -1,12 +1,20 @@
 package com.example.backend.service;
 
-import com.example.backend.model.Payment;
-
 import java.util.List;
+import com.example.backend.dto.request.CreatePaymentRequest;
+import com.example.backend.dto.request.UpdatePaymentRequest;
+import com.example.backend.dto.response.PaymentResponse;
 
 public interface PaymentService {
-    List<Payment> getAllPayments();
-    List<Payment> getPaymentsByOrderId(Long orderId);
-    Payment createPayment(Payment payment);
-    Payment updateStatus(Long id, String status);
+  List<PaymentResponse> getPaymentsByUsername(String username);
+
+  PaymentResponse getPaymentById(String username, Long id);
+
+  PaymentResponse getPaymentByOrderId(String username, Long orderId);
+
+  PaymentResponse createPayment(String username, CreatePaymentRequest request);
+
+  PaymentResponse updatePaymentStatus(String username, Long id, UpdatePaymentRequest request);
+
+  void deletePaymentById(String username, Long id);
 }
