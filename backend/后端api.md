@@ -550,22 +550,35 @@ DELETE `/api/payments/{paymentId}`
 
 ## 邮件（Email）
 
-### 获取平台所有邮件
+该模块的所有 api 都必须在在登录状态下访问，即请求头需包含 token，否则返回 403 *Forbidden*
 
-*  `GET /api/emails`
+### 获取登录用户的所有邮件
+
+**GET** `/api/emails/my-emails`
+
+返回数据
+
+- 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）；
+
+- 数据：`List<EmailResponse>`
 
 ### 获取指定邮件
 
-+  `GET /api/emails/{emailId}`
+**GET** `/api/emails/{emailId}`
 
-### 获取某用户的邮件记录
+返回数据
 
-*  `GET /api/user/{userId}/emails`
+- 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）；邮件不存在（404 *Not Found*）；权限问题（401 *Unauthorized*）
+
+- 数据：`EmailResponse`
 
 ### 发送邮件（添加记录）
 
-*  `POST /api/emails`
-* 请求体：
+*这个api是系统级api，无需登录验证*
+
+**POST** `/api/emails`
+
+请求体：`SendEmailRequest`
 
 ```json
 {
@@ -575,6 +588,26 @@ DELETE `/api/payments/{paymentId}`
 }
 ```
 
-### 删除邮件记录
+返回数据
 
-*  `DELETE /api/emails/{emailId}`
+- 状态码：成功（200 *ok*）；校验问题（400 *Bad Request*）
+
+- 数据：`EmailResponse`
+
+
+### 删除邮件
+
+**DELETE** `/api/emails/{emailId}`
+
+请求体：无
+
+返回数据
+
+- 状态码：成功（204 *NoContent*）；未登录（403 *Forbidden*）；权限问题（401 *Unauthorized*）
+
+- 数据：空
+
+### *获取平台所有邮件
+
+**GET** `/api/emails`
+
