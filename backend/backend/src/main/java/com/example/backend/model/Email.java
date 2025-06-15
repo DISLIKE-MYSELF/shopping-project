@@ -1,6 +1,6 @@
 package com.example.backend.model;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,12 +35,12 @@ public class Email {
 
   // 发送时间
   @Column(name = "sent_at")
-  private Timestamp sentAt;
+  private LocalDateTime sentAt;
 
   @PrePersist
   public void prePersist() {
     if (sentAt == null) {
-      sentAt = new Timestamp(System.currentTimeMillis());
+      sentAt = LocalDateTime.now();
     }
   }
 }

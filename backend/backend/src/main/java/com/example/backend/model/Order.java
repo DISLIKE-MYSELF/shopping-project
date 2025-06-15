@@ -1,6 +1,6 @@
 package com.example.backend.model;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -39,11 +39,11 @@ public class Order {
 
   // 创建时间
   @Column(name = "created_at")
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
 
   // 更新时间
   @Column(name = "updated_at")
-  private Timestamp updatedAt;
+  private LocalDateTime updatedAt;
 
   @PrePersist
   public void prePersist() {
@@ -51,7 +51,7 @@ public class Order {
       status = OrderStatus.PENDING;
     }
     if (createdAt == null) {
-      createdAt = new Timestamp(System.currentTimeMillis());
+      createdAt = LocalDateTime.now();
     }
     if (updatedAt == null) {
       updatedAt = createdAt;
@@ -60,6 +60,6 @@ public class Order {
 
   @PreUpdate
   public void preUpdate() {
-    updatedAt = new Timestamp(System.currentTimeMillis());
+    updatedAt = LocalDateTime.now();
   }
 }

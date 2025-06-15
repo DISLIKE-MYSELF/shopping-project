@@ -1,6 +1,6 @@
 package com.example.backend.model;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,12 +33,12 @@ public class Favorite {
 
   // 更新时间
   @Column(name = "updated_at")
-  private Timestamp updatedAt;
+  private LocalDateTime updatedAt;
 
   @PrePersist
   public void prePersist() {
     if (updatedAt == null) {
-      updatedAt = new Timestamp(System.currentTimeMillis());
+      updatedAt = LocalDateTime.now();
     }
   }
 
@@ -51,6 +51,6 @@ public class Favorite {
 
   @PreUpdate
   public void preUpdate() {
-    updatedAt = new Timestamp(System.currentTimeMillis());
+    updatedAt = LocalDateTime.now();
   }
 }

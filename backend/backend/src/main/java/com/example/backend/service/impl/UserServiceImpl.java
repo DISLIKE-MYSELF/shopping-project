@@ -1,6 +1,5 @@
 package com.example.backend.service.impl;
 
-import java.sql.Timestamp;
 import java.util.List;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -87,7 +86,6 @@ public class UserServiceImpl implements UserService {
       throw new BusinessException("邮箱已存在");
     }
 
-    user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
     return userRepository.save(user);
   }
 

@@ -1,6 +1,6 @@
 package com.example.backend.service.impl;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -114,12 +114,12 @@ public class CartServiceImpl implements CartService {
       newItem.setCart(cart);
       newItem.setProduct(product);
       newItem.setQuantity(request.quantity());
-      newItem.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+      newItem.setCreatedAt(LocalDateTime.now());
       cartItemRepository.save(newItem);
     }
 
     // 更新购物车时间
-    cart.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+    cart.setUpdatedAt(LocalDateTime.now());
 
     // 返回更新后的购物车
     return getCartResponse(cartRepository.save(cart));
@@ -182,7 +182,7 @@ public class CartServiceImpl implements CartService {
     cartItemRepository.delete(cartItem);
 
     // 更新购物车时间
-    cart.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+    cart.setUpdatedAt(LocalDateTime.now());
 
     return getCartResponse(cartRepository.save(cart));
   }
@@ -214,7 +214,7 @@ public class CartServiceImpl implements CartService {
 
     cartItem.setQuantity(request.quantity());
 
-    cart.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+    cart.setUpdatedAt(LocalDateTime.now());
 
     return getCartResponse(cartRepository.save(cart));
   }
@@ -233,7 +233,7 @@ public class CartServiceImpl implements CartService {
     cartItemRepository.deleteAllByCartId(cartId);
 
     // 更新购物车时间
-    cart.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+    cart.setUpdatedAt(LocalDateTime.now());
 
     return getCartResponse(cartRepository.save(cart));
   }

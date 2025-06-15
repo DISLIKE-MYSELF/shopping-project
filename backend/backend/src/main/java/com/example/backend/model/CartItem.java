@@ -1,6 +1,6 @@
 package com.example.backend.model;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,12 +36,12 @@ public class CartItem {
 
   // 创建时间
   @Column(name = "created_at")
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
 
   @PrePersist
   public void prePersist() {
     if (createdAt == null) {
-      createdAt = new Timestamp(System.currentTimeMillis());
+      createdAt = LocalDateTime.now();
     }
   }
 }

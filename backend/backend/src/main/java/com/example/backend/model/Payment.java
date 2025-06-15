@@ -1,7 +1,7 @@
 package com.example.backend.model;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -44,15 +44,15 @@ public class Payment {
 
   // 支付时间
   @Column(name = "payment_time")
-  private Timestamp paymentTime;
+  private LocalDateTime paymentTime;
 
   // 创建时间
   @Column(name = "created_at")
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
 
   // 更新时间
   @Column(name = "updated_at")
-  private Timestamp updatedAt;
+  private LocalDateTime updatedAt;
 
   @PrePersist
   public void prePersist() {
@@ -60,7 +60,7 @@ public class Payment {
       status = PaymentStatus.PENDING;
     }
     if (createdAt == null) {
-      createdAt = new Timestamp(System.currentTimeMillis());
+      createdAt = LocalDateTime.now();
     }
     if (updatedAt == null) {
       updatedAt = createdAt;
@@ -69,7 +69,7 @@ public class Payment {
 
   @PreUpdate
   public void preUpdate() {
-    this.updatedAt = new Timestamp(System.currentTimeMillis());
+    this.updatedAt = LocalDateTime.now();
     if (this.status.equals(PaymentStatus.PAIED)) {
       this.paymentTime = updatedAt;
     }

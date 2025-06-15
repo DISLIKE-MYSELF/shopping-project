@@ -1,6 +1,6 @@
 package com.example.backend.service.impl;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -109,12 +109,11 @@ public class FavoriteServiceImpl implements FavoriteService {
       FavoriteItem newItem = new FavoriteItem();
       newItem.setFavorite(favorite);
       newItem.setProduct(product);
-      newItem.setCreatedAt(new Timestamp(System.currentTimeMillis()));
       favoriteItemRepository.save(newItem);
     }
 
     // 更新收藏夹时间
-    favorite.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+    favorite.setUpdatedAt(LocalDateTime.now());
 
     // 返回更新后的收藏夹
     return getFavoriteResponse(favoriteRepository.save(favorite));
@@ -180,7 +179,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     favoriteItemRepository.delete(favoriteItem);
 
     // 更新收藏夹时间
-    favorite.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+    favorite.setUpdatedAt(LocalDateTime.now());
 
     return getFavoriteResponse(favoriteRepository.save(favorite));
   }
@@ -199,7 +198,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     favoriteItemRepository.deleteAllByFavoriteId(favoriteId);
 
     // 更新收藏夹时间
-    favorite.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+    favorite.setUpdatedAt(LocalDateTime.now());
 
     return getFavoriteResponse(favoriteRepository.save(favorite));
   }

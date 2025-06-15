@@ -1,6 +1,6 @@
 package com.example.backend.model;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
@@ -41,11 +41,11 @@ public class User implements UserDetails {
 
   // 创建时间
   @Column(name = "created_at")
-  private Timestamp createdAt;
+  private LocalDateTime createdAt;
 
   // 最后登录时间
   @Column(name = "last_login")
-  private Timestamp lastLogin;
+  private LocalDateTime lastLogin;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -80,7 +80,7 @@ public class User implements UserDetails {
   @PrePersist
   public void prePersist() {
     if (createdAt == null) {
-      createdAt = new Timestamp(System.currentTimeMillis());
+      createdAt = LocalDateTime.now();
     }
   }
 }
