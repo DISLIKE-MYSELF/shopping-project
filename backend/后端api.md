@@ -53,7 +53,7 @@ F-->>C: Continue to controller
 
 ```json
 {
-	"username": "user1",
+  "username": "user1",
   "password": "password",
   "email": "user1@example.com"
 }
