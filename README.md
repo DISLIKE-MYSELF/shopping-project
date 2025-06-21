@@ -54,7 +54,16 @@ cp .env.example .env
 docker-compose up --build
 ```
 
-### ✅ 4. 启动前端服务
+### ✅ 4. 启动后端服务
+
+```bash
+mvn package -DskipTests
+docker-compose down --remove-orphans -v
+docker-compose build --no-cache backend
+docker-compose up backend
+```
+
+### ✅ 5. 启动前端服务
 
 ```bash
 docker-compose down --remove-orphans -v

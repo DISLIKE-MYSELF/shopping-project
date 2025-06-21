@@ -1,12 +1,19 @@
+DROP DATABASE IF EXISTS shop_db;
+
+SET
+  character_set_client = utf8mb4;
+
 -- 创建数据库
-CREATE DATABASE IF NOT EXISTS shop_db;
+CREATE DATABASE IF NOT EXISTS shop_db CHARACTER
+SET
+  utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE shop_db;
 
 -- 创建 users 表
 CREATE TABLE
   IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(50) UNIQUE NOT NULL,
@@ -15,26 +22,36 @@ CREATE TABLE
     last_login TIMESTAMP NULL
   );
 
+ALTER TABLE users CONVERT TO CHARACTER
+SET
+  utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- 创建 products 表
 CREATE TABLE
   IF NOT EXISTS products (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    price DECIMAL(10, 2) NOT NULL,
-    description TEXT,
-    category VARCHAR(50),
-    stock INT UNSIGNED DEFAULT 0,
-    image VARCHAR(50),
-    rating DECIMAL(2, 1) DEFAULT 0.0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) CHARACTER
+    SET
+      utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+      price DECIMAL(10, 2) NOT NULL,
+      description TEXT,
+      category VARCHAR(50),
+      stock INT UNSIGNED DEFAULT 0,
+      image VARCHAR(50),
+      rating DECIMAL(2, 1) DEFAULT 0.0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   );
+
+ALTER TABLE products CONVERT TO CHARACTER
+SET
+  utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 创建 carts 表
 CREATE TABLE
   IF NOT EXISTS carts (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
   );
@@ -42,20 +59,21 @@ CREATE TABLE
 -- 创建 cart_items 表
 CREATE TABLE
   IF NOT EXISTS cart_items (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    cart_id INT NOT NULL,
-    product_id INT NOT NULL,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    cart_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
     quantity INT UNSIGNED NOT NULL DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (cart_id) REFERENCES carts (cart_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE
+    FOREIGN KEY (cart_id) REFERENCES carts (id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
   );
 
 -- 创建 favorites 表
 CREATE TABLE
   IF NOT EXISTS favorites (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    name VARCHAR(20),
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
   );
@@ -63,19 +81,19 @@ CREATE TABLE
 -- 创建 favorite_items 表
 CREATE TABLE
   IF NOT EXISTS favorite_items (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    favorite_id INT NOT NULL,
-    product_id INT NOT NULL,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    favorite_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (favorite_id) REFERENCES favorites (favorite_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE CASCADE
+    FOREIGN KEY (favorite_id) REFERENCES favorites (id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
   );
 
 -- 创建 orders 表
 CREATE TABLE
   IF NOT EXISTS orders (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
     address VARCHAR(255) NOT NULL,
     status VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -86,9 +104,9 @@ CREATE TABLE
 -- 创建 order_items 表
 CREATE TABLE
   IF NOT EXISTS order_items (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT NOT NULL,
-    product_id INT NOT NULL,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
     quantity INT UNSIGNED NOT NULL DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE,
@@ -98,21 +116,21 @@ CREATE TABLE
 -- 创建 payments 表
 CREATE TABLE
   IF NOT EXISTS payments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT NOT NULL,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
     amount DECIMAL(20, 2) NOT NULL,
     payment_method VARCHAR(50),
     status VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (order_id) REFERENCES
+    FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE
   );
 
 -- 创建 emails 表
 CREATE TABLE
   IF NOT EXISTS emails (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
     subject VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
