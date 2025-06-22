@@ -1,16 +1,16 @@
 import styles from './styles.module.css'
 import { Card, Flex } from 'antd'
-import type { ProductCardResponse } from '@/types'
+import type { FavoriteItemResponse } from '@/types'
 import { useNavigate } from 'react-router-dom'
 const { Meta } = Card
 
-interface ProductCardProps {
-  product: ProductCardResponse
+interface FavoriteItemCardProps {
+  favoriteItem: FavoriteItemResponse
 }
-const ProductCard = ({ product }: ProductCardProps) => {
+const FavoriteItemCard = ({ favoriteItem }: FavoriteItemCardProps) => {
   const navigate = useNavigate()
   const handleClick = () => {
-    navigate(`/product/${product.id}`)
+    navigate(`/product/${favoriteItem.productId}`)
   }
 
   return (
@@ -19,24 +19,24 @@ const ProductCard = ({ product }: ProductCardProps) => {
       hoverable
       cover={
         <div className={styles.imageContainer}>
-          <img src={`/img/${product?.image}`} alt={product?.name} />
+          <img src={`/img/${favoriteItem?.image}`} alt={favoriteItem?.name} />
         </div>
       }
       onClick={handleClick}
     >
       <Meta
-        title={<div className={styles.title}>{product?.name}</div>}
+        title={<div className={styles.title}>{favoriteItem.name}</div>}
         className={styles.contentContainer}
         description={
           <Flex align='center' gap='middle'>
-            <div className={styles.price}>{product?.price} ￥</div>
+            <div className={styles.price}>{favoriteItem.price} ￥</div>
             <div
               style={{
-                color: product.stock === 0 ? 'red' : '#000',
+                color: favoriteItem.stock === 0 ? 'red' : '#000',
                 fontSize: '1.2rem',
               }}
             >
-              库存 {product?.stock} 件
+              库存 {favoriteItem.stock} 件
             </div>
           </Flex>
         }
@@ -45,4 +45,4 @@ const ProductCard = ({ product }: ProductCardProps) => {
   )
 }
 
-export default ProductCard
+export default FavoriteItemCard

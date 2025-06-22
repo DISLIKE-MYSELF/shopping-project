@@ -9,6 +9,8 @@ import {
   GithubOutlined,
 } from '@ant-design/icons'
 import { Flex, Space, Drawer } from 'antd'
+import { useSnapshot } from 'valtio'
+import { authStore } from '@/store'
 
 const navbarHeight = window.innerWidth < 480 ? 70 : 80
 const Navbar = () => {
@@ -17,6 +19,7 @@ const Navbar = () => {
   const [lastScrollY, setLastScrollY] = useState(0)
   const [hidden, setHidden] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { token } = useSnapshot(authStore)
 
   // 计算导航栏高度（考虑响应式）
 
@@ -85,7 +88,16 @@ const Navbar = () => {
                   )
                 }}
               />
-              <UserOutlined className={styles.icon} />
+              <UserOutlined
+                className={styles.icon}
+                onClick={() => {
+                  if (token) {
+                    navigate('/profile')
+                  } else {
+                    navigate('/login')
+                  }
+                }}
+              />
               <HeartOutlined className={styles.icon} />
               <ShoppingCartOutlined
                 className={styles.icon}

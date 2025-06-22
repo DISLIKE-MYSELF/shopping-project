@@ -12,13 +12,14 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
-    "antd": "^5.25.4",
+    "antd": "^5.26.1",
     "axios": "^1.9.0",
     "axios-mock-adapter": "^2.1.0",
     "react": "^19.1.0",
     "react-app": "file:",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.6.1"
+    "react-router-dom": "^7.6.1",
+    "valtio": "^2.1.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
