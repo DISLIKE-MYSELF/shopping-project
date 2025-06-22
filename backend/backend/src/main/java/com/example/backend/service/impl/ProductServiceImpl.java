@@ -1,10 +1,11 @@
 package com.example.backend.service.impl;
 
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.backend.dto.request.CreateProductRequest;
 import com.example.backend.dto.request.UpdateProductRequest;
-import com.example.backend.dto.response.ProductCardsResponse;
+import com.example.backend.dto.response.ProductCardResponse;
 import com.example.backend.dto.response.ProductResponse;
 import com.example.backend.exception.EntityNotFoundException;
 import com.example.backend.mapper.ProductMapper;
@@ -21,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
   private final ProductMapper productMapper;
 
   @Override
-  public ProductCardsResponse getAllProducts() {
+  public List<ProductCardResponse> getAllProducts() {
     return productMapper.toProductCardsResponse(productRepository.findAll());
   }
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.dto.request.AddFavoriteItemRequest;
 import com.example.backend.dto.request.CreateFavoriteRequest;
+import com.example.backend.dto.response.ApiResponse;
 import com.example.backend.dto.response.FavoriteResponse;
 import com.example.backend.service.FavoriteService;
 import jakarta.validation.Valid;
@@ -27,43 +28,45 @@ public class FavoriteController {
 
   // 获取用户所有收藏夹
   @GetMapping("/my-favorites")
-  public ResponseEntity<List<FavoriteResponse>> getAllFavorites(
+  public ResponseEntity<ApiResponse<List<FavoriteResponse>>> getAllFavorites(
       @AuthenticationPrincipal UserDetails userDetails) {
-    return ResponseEntity.ok(favoriteService.getFavoritesByUsername(userDetails.getUsername()));
+    return ResponseEntity
+        .ok(ApiResponse.of(favoriteService.getFavoritesByUsername(userDetails.getUsername())));
   }
 
-  // 增加收藏夹
+  // 创建收藏夹
   @PostMapping("/my-favorites")
-  public ResponseEntity<FavoriteResponse> createFavorite(
+  public ResponseEntity<ApiResponse<FavoriteResponse>> createFavorite(
       @AuthenticationPrincipal UserDetails userDetails,
-      @RequestBody(required = false) @Valid CreateFavoriteRequest request) {
-    String name = (request != null && request.name() != null) ? request.name() : "";
-    return ResponseEntity.ok(favoriteService.createFavorite(userDetails.getUsername(), name));
+      @RequestBody @Valid CreateFavoriteRequest request) {
+    return ResponseEntity.ok(
+        ApiResponse.of(favoriteService.createFavorite(userDetails.getUsername(), request.name())));
   }
 
   // 添加收藏夹项
   @PostMapping("/{favoriteId}/items")
-  public ResponseEntity<FavoriteResponse> addToFavorite(
+  public ResponseEntity<ApiResponse<FavoriteResponse>> addToFavorite(
       @AuthenticationPrincipal UserDetails userDetails, @PathVariable Long favoriteId,
       @RequestBody @Valid AddFavoriteItemRequest request) {
-    return ResponseEntity
-        .ok(favoriteService.addToFavorite(userDetails.getUsername(), favoriteId, request));
+    return ResponseEntity.ok(ApiResponse
+        .of(favoriteService.addToFavorite(userDetails.getUsername(), favoriteId, request)));
   }
 
   // 删除单个收藏夹项
   @DeleteMapping("/{favoriteId}/items/{favoriteItemId}")
-  public ResponseEntity<FavoriteResponse> deleteFavoriteItem(
+  public ResponseEntity<ApiResponse<FavoriteResponse>> deleteFavoriteItem(
       @AuthenticationPrincipal UserDetails userDetails, @PathVariable Long favoriteId,
       @PathVariable Long favoriteItemId) {
-    return ResponseEntity.ok(
-        favoriteService.deleteFavoriteItem(userDetails.getUsername(), favoriteId, favoriteItemId));
+    return ResponseEntity.ok(ApiResponse.of(
+        favoriteService.deleteFavoriteItem(userDetails.getUsername(), favoriteId, favoriteItemId)));
   }
 
   // 清空收藏夹
   @DeleteMapping("/{favoriteId}/items")
-  public ResponseEntity<FavoriteResponse> clearFavorite(
+  public ResponseEntity<ApiResponse<FavoriteResponse>> clearFavorite(
       @AuthenticationPrincipal UserDetails userDetails, @PathVariable Long favoriteId) {
-    return ResponseEntity.ok(favoriteService.clearFavorite(userDetails.getUsername(), favoriteId));
+    return ResponseEntity
+        .ok(ApiResponse.of(favoriteService.clearFavorite(userDetails.getUsername(), favoriteId)));
   }
 
   // 删除收藏夹

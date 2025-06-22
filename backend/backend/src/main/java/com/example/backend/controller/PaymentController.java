@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.dto.request.CreatePaymentRequest;
 import com.example.backend.dto.request.UpdatePaymentRequest;
+import com.example.backend.dto.response.ApiResponse;
 import com.example.backend.dto.response.PaymentResponse;
 import com.example.backend.service.PaymentService;
 import jakarta.validation.Valid;
@@ -27,41 +28,44 @@ public class PaymentController {
 
   // 获取用户所有支付记录
   @GetMapping("/my-payments")
-  public ResponseEntity<List<PaymentResponse>> getAllPayments(
+  public ResponseEntity<ApiResponse<List<PaymentResponse>>> getAllPayments(
       @AuthenticationPrincipal UserDetails userDetails) {
-    return ResponseEntity.ok(paymentService.getPaymentsByUsername(userDetails.getUsername()));
+    return ResponseEntity
+        .ok(ApiResponse.of(paymentService.getPaymentsByUsername(userDetails.getUsername())));
   }
 
   // 获取指定支付记录
   @GetMapping("/{paymentId}")
-  public ResponseEntity<PaymentResponse> getPaymentById(
+  public ResponseEntity<ApiResponse<PaymentResponse>> getPaymentById(
       @AuthenticationPrincipal UserDetails userDetails, @PathVariable Long paymentId) {
-    return ResponseEntity.ok(paymentService.getPaymentById(userDetails.getUsername(), paymentId));
+    return ResponseEntity
+        .ok(ApiResponse.of(paymentService.getPaymentById(userDetails.getUsername(), paymentId)));
   }
 
   // 获取某订单的支付记录
   @GetMapping("/orders/{orderId}")
-  public ResponseEntity<PaymentResponse> getPaymentByOrderId(
+  public ResponseEntity<ApiResponse<PaymentResponse>> getPaymentByOrderId(
       @AuthenticationPrincipal UserDetails userDetails, @PathVariable Long orderId) {
     return ResponseEntity
-        .ok(paymentService.getPaymentByOrderId(userDetails.getUsername(), orderId));
+        .ok(ApiResponse.of(paymentService.getPaymentByOrderId(userDetails.getUsername(), orderId)));
   }
 
   // 创建支付记录
   @PostMapping
-  public ResponseEntity<PaymentResponse> createPayment(
+  public ResponseEntity<ApiResponse<PaymentResponse>> createPayment(
       @AuthenticationPrincipal UserDetails userDetails,
       @RequestBody @Valid CreatePaymentRequest request) {
-    return ResponseEntity.ok(paymentService.createPayment(userDetails.getUsername(), request));
+    return ResponseEntity
+        .ok(ApiResponse.of(paymentService.createPayment(userDetails.getUsername(), request)));
   }
 
   // 更新支付状态
   @PostMapping("/{paymentId}/status")
-  public ResponseEntity<PaymentResponse> updatePaymentStatus(
+  public ResponseEntity<ApiResponse<PaymentResponse>> updatePaymentStatus(
       @AuthenticationPrincipal UserDetails userDetails, @PathVariable Long paymentId,
       @RequestBody @Valid UpdatePaymentRequest request) {
-    return ResponseEntity
-        .ok(paymentService.updatePaymentStatus(userDetails.getUsername(), paymentId, request));
+    return ResponseEntity.ok(ApiResponse
+        .of(paymentService.updatePaymentStatus(userDetails.getUsername(), paymentId, request)));
   }
 
   // 删除支付记录

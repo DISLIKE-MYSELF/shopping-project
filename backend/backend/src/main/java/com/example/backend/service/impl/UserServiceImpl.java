@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.backend.dto.request.LoginRequest;
 import com.example.backend.dto.request.RegisterRequest;
+import com.example.backend.dto.request.UpdateUserProfileRequest;
 import com.example.backend.dto.response.LoginResponse;
 import com.example.backend.dto.response.RegisterResponse;
 import com.example.backend.dto.response.UserProfileResponse;
@@ -59,6 +60,16 @@ public class UserServiceImpl implements UserService {
     User user = userRepository.findByUsername(username)
         .orElseThrow(() -> new EntityNotFoundException("User", username));
     return userMapper.toUserProfileResponse(user);
+  }
+
+  @Override
+  @Transactional
+  public UserProfileResponse updateUserProfileByUsername(String username,
+      UpdateUserProfileRequest request) {
+    User user = userRepository.findByUsername(username)
+        .orElseThrow(() -> new EntityNotFoundException("User", username));
+    user.setAddress(request.address());
+    return userMapper.toUserProfileResponse(userRepository.saveAndFlush(user));
   }
 
   @Override

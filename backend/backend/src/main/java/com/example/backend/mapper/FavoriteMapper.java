@@ -13,13 +13,12 @@ public class FavoriteMapper {
 
   private FavoriteItemResponse toFavoriteItemResponse(FavoriteItem favoriteItem) {
     Product product = favoriteItem.getProduct();
-    return new FavoriteItemResponse(favoriteItem.getId(), product.getName(), product.getPrice(),
+    return new FavoriteItemResponse(favoriteItem.getId(), product.getId(), product.getName(), product.getPrice(),
         product.getImage(), product.getStock(), favoriteItem.getCreatedAt());
   }
 
   public FavoriteResponse toFavoriteResponse(Favorite favorite, List<FavoriteItem> favoriteItems) {
-    List<FavoriteItemResponse> itemResponses =
-        favoriteItems.stream().map(this::toFavoriteItemResponse).toList();
+    List<FavoriteItemResponse> itemResponses = favoriteItems.stream().map(this::toFavoriteItemResponse).toList();
 
     return new FavoriteResponse(favorite.getId(), favorite.getName(), itemResponses,
         favorite.getUpdatedAt());

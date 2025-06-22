@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.dto.request.LoginRequest;
 import com.example.backend.dto.request.RegisterRequest;
+import com.example.backend.dto.request.UpdateUserProfileRequest;
+import com.example.backend.dto.response.ApiResponse;
 import com.example.backend.dto.response.LoginResponse;
 import com.example.backend.dto.response.RegisterResponse;
 import com.example.backend.dto.response.UserProfileResponse;
@@ -30,14 +32,16 @@ public class UserController {
 
   // 注册
   @PostMapping("/register")
-  public ResponseEntity<RegisterResponse> register(@RequestBody @Valid RegisterRequest request) {
-    return ResponseEntity.ok().body(userService.register(request));
+  public ResponseEntity<ApiResponse<RegisterResponse>> register(
+      @RequestBody @Valid RegisterRequest request) {
+    return ResponseEntity.ok(ApiResponse.of(userService.register(request)));
   }
 
   // 登录
   @PostMapping("/login")
-  public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
-    return ResponseEntity.ok(userService.login(request));
+  public ResponseEntity<ApiResponse<LoginResponse>> login(
+      @RequestBody @Valid LoginRequest request) {
+    return ResponseEntity.ok(ApiResponse.of(userService.login(request)));
   }
 
   // @GetMapping("/current")
@@ -49,9 +53,10 @@ public class UserController {
 
   // 获取当前用户信息
   @GetMapping("/current")
-  public ResponseEntity<UserProfileResponse> getCurrentUser(
+  public ResponseEntity<ApiResponse<UserProfileResponse>> getCurrentUser(
       @AuthenticationPrincipal UserDetails userDetails) {
-    return ResponseEntity.ok(userService.getUserProfileByUsername(userDetails.getUsername()));
+    return ResponseEntity
+        .ok(ApiResponse.of(userService.getUserProfileByUsername(userDetails.getUsername())));
   }
 
   // 删除当前用户
@@ -61,15 +66,24 @@ public class UserController {
     return ResponseEntity.noContent().build();
   }
 
+  // 更新用户信息
+  @PostMapping("/current")
+  public ResponseEntity<ApiResponse<UserProfileResponse>> updateUser(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @RequestBody UpdateUserProfileRequest request) {
+    return ResponseEntity.ok(ApiResponse
+        .of(userService.updateUserProfileByUsername(userDetails.getUsername(), request)));
+  }
+
   // 根据 ID 获取用户信息
   @GetMapping("/{id}")
-  public UserProfileResponse getUserById(@PathVariable Long id) {
-    return userService.getUserProfileById(id);
+  public ResponseEntity<ApiResponse<UserProfileResponse>> getUserById(@PathVariable Long id) {
+    return ResponseEntity.ok(ApiResponse.of(userService.getUserProfileById(id)));
   }
 
   // 获取所有用户
   @GetMapping
-  public ResponseEntity<List<User>> getAllUsers() {
-    return ResponseEntity.ok(userService.getAllUsers());
+  public ResponseEntity<ApiResponse<List<User>>> getAllUsers() {
+    return ResponseEntity.ok(ApiResponse.of(userService.getAllUsers()));
   }
 }

@@ -21,8 +21,8 @@ public class GlobalExceptionHandler {
       WebRequest request) {
     String path = ((ServletWebRequest) request).getRequest().getRequestURI().toString();
 
-    ErrorResponse errorResponse =
-        new ErrorResponse("EntityNotFoundException", ex.getMessage(), path, null);
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(),
+        "EntityNotFoundException", ex.getMessage(), path, null);
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
 
@@ -31,9 +31,8 @@ public class GlobalExceptionHandler {
       WebRequest request) {
     String path = ((ServletWebRequest) request).getRequest().getRequestURI().toString();
 
-    ErrorResponse errorResponse =
-        new ErrorResponse("BusinessException", ex.getMessage(), path, null);
-
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
+        "BusinessException", ex.getMessage(), path, null);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
@@ -42,9 +41,8 @@ public class GlobalExceptionHandler {
       WebRequest request) {
     String path = ((ServletWebRequest) request).getRequest().getRequestURI().toString();
 
-    ErrorResponse errorResponse =
-        new ErrorResponse("UnauthorizedException", ex.getMessage(), path, null);
-
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED.value(),
+        "UnauthorizedException", ex.getMessage(), path, null);
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
   }
 
@@ -53,9 +51,8 @@ public class GlobalExceptionHandler {
       HttpMessageNotReadableException ex, WebRequest request) {
     String path = ((ServletWebRequest) request).getRequest().getRequestURI().toString();
 
-    ErrorResponse errorResponse =
-        new ErrorResponse("UnauthorizedException", "请求体缺失或无法解析，请确保发送了有效的请求体！", path, null);
-
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
+        "UnauthorizedException", "请求体缺失或无法解析，请确保发送了有效的请求体！", path, null);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
@@ -63,18 +60,15 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException e,
       WebRequest request) {
     String path = ((ServletWebRequest) request).getRequest().getRequestURI().toString();
-
     List<String> details = new ArrayList<>();
-
     e.getBindingResult().getAllErrors().forEach((error) -> {
       String fieldName = ((FieldError) error).getField();
       String errorMessage = error.getDefaultMessage();
       details.add(fieldName + ": " + errorMessage);
     });
 
-    ErrorResponse errorResponse =
-        new ErrorResponse("ValidationException", "Validation failed", path, details);
-
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
+        "ValidationException", "Validation failed", path, details);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
 
@@ -82,8 +76,8 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
     String path = ((ServletWebRequest) request).getRequest().getRequestURI().toString();
 
-    ErrorResponse errorResponse = new ErrorResponse("UnknownError", ex.getMessage(), path, null);
-
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+        "UnknownError", ex.getMessage(), path, null);
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
   }
 }

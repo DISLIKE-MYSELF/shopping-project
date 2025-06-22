@@ -3,6 +3,7 @@ package com.example.backend.service;
 import java.util.List;
 import com.example.backend.dto.request.LoginRequest;
 import com.example.backend.dto.request.RegisterRequest;
+import com.example.backend.dto.request.UpdateUserProfileRequest;
 import com.example.backend.dto.response.LoginResponse;
 import com.example.backend.dto.response.RegisterResponse;
 import com.example.backend.dto.response.UserProfileResponse;
@@ -18,6 +19,9 @@ public interface UserService {
   UserProfileResponse getUserProfileById(Long id);
 
   UserProfileResponse getUserProfileByUsername(String username);
+
+  UserProfileResponse updateUserProfileByUsername(String username,
+      UpdateUserProfileRequest request);
 
   RegisterResponse register(RegisterRequest request);
 
