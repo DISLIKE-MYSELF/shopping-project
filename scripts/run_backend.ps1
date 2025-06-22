@@ -1,4 +1,5 @@
-﻿param (
+﻿# 定义脚本参数
+param (
   [string]$projectPath = ".\backend\backend"
 )
 
@@ -30,14 +31,26 @@ else {
   exit 1
 }
 
-# 启动服务
-Write-Host "正在启动服务..."
-docker-compose up --build
+# 重新构建后端服务
+Write-Host "正在构建后端服务..."
+docker-compose build --no-cache backend
 
 if ($?) {
-  Write-Host "服务启动成功！" -ForegroundColor Green
+  Write-Host "Docker 构建成功！" -ForegroundColor Green
 }
 else {
-  Write-Host "服务启动失败！" -ForegroundColor Red
+  Write-Host "Docker 构建失败！" -ForegroundColor Red
+  exit 1
+}
+
+# 启动后端服务
+Write-Host "正在启动后端服务..."
+docker-compose up backend
+
+if ($?) {
+  Write-Host "后端服务启动成功！" -ForegroundColor Green
+}
+else {
+  Write-Host "后端服务启动失败！" -ForegroundColor Red
   exit 1
 }
