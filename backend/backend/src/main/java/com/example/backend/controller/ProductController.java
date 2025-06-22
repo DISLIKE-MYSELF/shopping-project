@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.dto.request.CreateProductRequest;
 import com.example.backend.dto.request.UpdateProductRequest;
-import com.example.backend.dto.response.ProductCardsResponse;
+import com.example.backend.dto.response.ApiResponse;
+import com.example.backend.dto.response.ProductCardResponse;
 import com.example.backend.dto.response.ProductResponse;
 import com.example.backend.service.ProductService;
 import jakarta.validation.Valid;
@@ -24,25 +26,25 @@ public class ProductController {
   private final ProductService productService;
 
   @GetMapping
-  public ResponseEntity<ProductCardsResponse> getAllProducts() {
-    return ResponseEntity.ok().body(productService.getAllProducts());
+  public ResponseEntity<ApiResponse<List<ProductCardResponse>>> getAllProducts() {
+    return ResponseEntity.ok(ApiResponse.of(productService.getAllProducts()));
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
-    return ResponseEntity.ok().body(productService.getProductById(id));
+  public ResponseEntity<ApiResponse<ProductResponse>> getProductById(@PathVariable Long id) {
+    return ResponseEntity.ok(ApiResponse.of(productService.getProductById(id)));
   }
 
   @PostMapping
-  public ResponseEntity<ProductResponse> createProduct(
+  public ResponseEntity<ApiResponse<ProductResponse>> createProduct(
       @RequestBody @Valid CreateProductRequest request) {
-    return ResponseEntity.ok().body(productService.createProduct(request));
+    return ResponseEntity.ok(ApiResponse.of(productService.createProduct(request)));
   }
 
   @PostMapping("/{id}")
-  public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id,
+  public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(@PathVariable Long id,
       @RequestBody @Valid UpdateProductRequest request) {
-    return ResponseEntity.ok().body(productService.updateProduct(id, request));
+    return ResponseEntity.ok(ApiResponse.of(productService.updateProduct(id, request)));
   }
 
   @DeleteMapping("/{id}")

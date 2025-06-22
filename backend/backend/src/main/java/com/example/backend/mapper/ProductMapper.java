@@ -3,7 +3,6 @@ package com.example.backend.mapper;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import com.example.backend.dto.response.ProductCardResponse;
-import com.example.backend.dto.response.ProductCardsResponse;
 import com.example.backend.dto.response.ProductResponse;
 import com.example.backend.model.Product;
 
@@ -14,10 +13,8 @@ public class ProductMapper {
         product.getPrice(), product.getStock());
   }
 
-  public ProductCardsResponse toProductCardsResponse(List<Product> products) {
-    List<ProductCardResponse> productCards =
-        products.stream().map(this::toProductCardResponse).toList();
-    return new ProductCardsResponse(productCards);
+  public List<ProductCardResponse> toProductCardsResponse(List<Product> products) {
+    return products.stream().map(this::toProductCardResponse).toList();
   }
 
   public ProductResponse toProductResponse(Product product) {

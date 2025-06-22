@@ -110,6 +110,26 @@ F-->>C: Continue to controller
 
 + 数据：空
 
+### 更新当前用户信息（地址）
+
+需在登录状态下访问，即请求头需包含token
+
+**POST** `/api/users/current`
+
+请求体：`UpdateUserProfileRequest`
+
+```json
+{
+  "address": "复旦大学",
+}
+```
+
+返回数据
+
++ 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
+
++ 数据：`UserProfileResponse`
+
 ### *获取指定用户信息
 
 *  `GET /api/users/{userId}`
@@ -367,7 +387,7 @@ F-->>C: Continue to controller
 
 - 状态码：成功（200 *ok*）；未登录（403 *Forbidden*）
 
-- 数据：`FavoriteRResponse`
+- 数据：`FavoriteResponse`
 
 ### 删除收藏夹
 

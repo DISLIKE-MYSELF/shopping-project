@@ -34,7 +34,7 @@ public class SecurityConfig {
         .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 无状态会话
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/users/login", "/api/users/register", "/api/products",
-                "/api/products/*")
+                "/api/products/*", "api/users")
             .permitAll() // 开放登录注册
             .anyRequest().authenticated()) // 其他请求需认证
         .addFilterBefore(new JwtAuthenticationFilter(userDetailsService, jwtUtils),

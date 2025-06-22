@@ -1,11 +1,11 @@
 import styles from './styles.module.css'
 import { Card, Flex } from 'antd'
-import type { Product } from '@/types'
+import type { ProductCardResponse } from '@/types'
 import { useNavigate } from 'react-router-dom'
 const { Meta } = Card
 
 interface ProductCardProps {
-  product: Product
+  product: ProductCardResponse
 }
 const ProductCard = ({ product }: ProductCardProps) => {
   const navigate = useNavigate()

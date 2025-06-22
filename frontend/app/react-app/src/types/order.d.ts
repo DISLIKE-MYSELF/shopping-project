@@ -6,3 +6,11 @@ export interface Order {
   createdAt: string
   updatedAt: string
 }
+
+export interface OrderItem {
+  id: number
+  orderId: number
+  productId: number
+  quantity: number
+  createdAt: string
+}

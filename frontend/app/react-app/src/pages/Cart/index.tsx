@@ -1,80 +1,81 @@
-import { useEffect, useMemo, useState } from 'react'
-import type { CartItem, Product } from '@/types'
-import useFetch from '@/hooks/useFetch'
 import Loading from '@/components/Loading'
 import NotFound from '@/components/NotFound'
 import PageTitle from '@/components/PageTitle'
-import { Flex, Empty, List, Button, Space } from 'antd'
-import styles from './styles.module.css'
-import { makeRequest } from '@/utils/makeRequest'
-import { DeleteOutlined } from '@ant-design/icons'
 import QuantityPanel from '@/components/QuantityPanel'
+import type { CartItemResponse } from '@/types'
+import { useDeleteCartItem, useGetCarts, useUpdateCartItem } from '@/utils/api'
+import { DeleteOutlined } from '@ant-design/icons'
+import { Button, Empty, Flex, List, Space, message } from 'antd'
+import { useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-interface CartItemData {
-  id: number
-  name: string
-  price: number
-  quantity: number
-  image: string
-  stock: number
-}
-
-const productCache = new Map<number, Product>()
+import styles from './styles.module.css'
 const Cart = () => {
-  const [cartItems, setCartItems] = useState<CartItemData[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const { data, loading, error } = useFetch<CartItem[]>(`/carts/user/1`)
-
+  const [cartItems, setCartItems] = useState<CartItemResponse[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [messageApi, contextHolder] = message.useMessage()
+  const curCartId = useRef(0)
+  const curCartItemId = useRef(0)
+  const nestedNode = useRef(<Loading />)
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
-      if (data && data.length > 0) {
-        const cartItemsData = await Promise.all(
-          data.map(async (item) => {
-            try {
-              let product = productCache.get(item.productId)
-              if (!product) {
-                product = await makeRequest<Product>(
-                  'mockGet',
-                  `/products/${item.productId}`,
-                )
-              }
-              return {
-                id: item.id,
-                name: product.name,
-                price: product.price,
-                quantity: item.quantity,
-                image: product.image,
-                stock: product.stock,
-              }
-            } catch (err) {
-              console.error(`Failed to fetch product ${item.productId}:`, err)
-              return null
-            }
-          }),
-        )
-        setCartItems(
-          cartItemsData.filter((item): item is CartItemData => item !== null),
-        )
-      } else {
-        setCartItems([])
-      }
+  const { error } = useGetCarts({
+    onSuccess: (data) => {
+      setCartItems(data[0].cartItems)
+      curCartId.current = data[0].id
       setIsLoading(false)
-    }
-    fetchData()
-  }, [data])
+    },
+    onError: (error) => {
+      setIsLoading(false)
+      messageApi.open({
+        type: 'error',
+        content: error.message,
+      })
+    },
+  })
+  const { execute: removeCartItem } = useDeleteCartItem(
+    curCartId.current,
+    curCartItemId.current,
+    {
+      onSuccess: (data) => {
+        setCartItems(data.cartItems)
+        setIsLoading(false)
+      },
+      onError: (error) => {
+        setIsLoading(false)
+        messageApi.open({
+          type: 'error',
+          content: error.message,
+        })
+      },
+    },
+  )
+
+  const { execute: updateCartItem } = useUpdateCartItem(
+    curCartId.current,
+    curCartItemId.current,
+    {
+      onSuccess: (data) => {
+        setCartItems(data.cartItems)
+        setIsLoading(false)
+      },
+      onError: (error) => {
+        messageApi.open({
+          type: 'error',
+          content: error.message,
+        })
+      },
+    },
+  )
 
   const removeItem = (id: number) => {
-    setCartItems((items) => items.filter((item) => item.id !== id))
+    curCartItemId.current = id
+    setIsLoading(true)
+    removeCartItem()
   }
 
   const updateQuantity = (id: number, quantity: number) => {
-    setCartItems((items) =>
-      items.map((item) => (item.id === id ? { ...item, quantity } : item)),
-    )
+    curCartItemId.current = id
+    setIsLoading(true)
+    updateCartItem({ quantity })
   }
 
   const totalPrice = useMemo(() => {
@@ -84,100 +85,96 @@ const Cart = () => {
     )
   }, [cartItems])
 
-  if (loading || isLoading) return <Loading />
-  if (error) {
-    console.log(error)
-    return <NotFound />
-  }
-  if (cartItems.length === 0)
-    return (
-      <Flex
-        className={styles.wrapper}
-        justify='center'
-        align='center'
-        vertical
-        gap={'large'}
-      >
-        <PageTitle title='购物车' />
-        <Empty />
-      </Flex>
+  if (isLoading) nestedNode.current = <Loading />
+  else if (error)
+    nestedNode.current = (
+      <NotFound title={error.error} message={error.message} />
+    )
+  else if (cartItems.length === 0)
+    nestedNode.current = <Empty description='购物车为空' />
+  else
+    nestedNode.current = (
+      <>
+        <List
+          itemLayout='vertical'
+          className={styles.list}
+          size='large'
+          dataSource={cartItems}
+          renderItem={(item) => (
+            <>
+              <List.Item
+                key={item.id}
+                className={styles.card}
+                onClick={() => navigate(`/product/${item.id}`)}
+                extra={
+                  <div className={styles.imageContainer}>
+                    <img src={`/img/${item.image}`} alt={item.name} />
+                  </div>
+                }
+              >
+                <List.Item.Meta
+                  title={
+                    <Space size='large'>
+                      <div className={styles.title}>{item.name}</div>
+                      <div className={styles.price}>{item.price} ￥</div>
+                    </Space>
+                  }
+                  description={
+                    <Flex
+                      className={styles.contentContainer}
+                      gap='middle'
+                      vertical
+                    >
+                      <div
+                        style={{
+                          color: item.stock === 0 ? 'red' : '#000',
+                          fontSize: '1.2rem',
+                        }}
+                      >
+                        库存 {item.stock} 件
+                      </div>
+                    </Flex>
+                  }
+                />
+                <Flex justify='space-between' align='center'>
+                  <QuantityPanel
+                    defaultQuantity={item.quantity}
+                    maxQuantity={item.stock}
+                    minQuantity={1}
+                    onQuantityChange={(quantity) => {
+                      updateQuantity(item.id, quantity)
+                    }}
+                  />
+                  <div className={styles.itemTotalPrice}>
+                    总计 <span>{item.price * item.quantity} ￥</span>
+                  </div>
+                  <Button
+                    icon={<DeleteOutlined />}
+                    danger
+                    type='text'
+                    className={styles.deleteButton}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      removeItem(item.id)
+                    }}
+                  />
+                </Flex>
+              </List.Item>
+              <div className={styles.divider}></div>
+            </>
+          )}
+        ></List>
+        <div className={styles.cartFooter}>
+          合计 <span>{totalPrice.toFixed(2)} ￥</span>
+        </div>
+      </>
     )
 
   return (
     <Flex className={styles.wrapper} justify='center' vertical>
+      {contextHolder}
       <PageTitle title='购物车' />
-      <List
-        itemLayout='vertical'
-        className={styles.list}
-        size='large'
-        dataSource={cartItems}
-        renderItem={(item) => (
-          <>
-            <List.Item
-              key={item.id}
-              className={styles.card}
-              onClick={() => navigate(`/product/${item.id}`)}
-              extra={
-                <div className={styles.imageContainer}>
-                  <img src={`/img/${item.image}`} alt={item.name} />
-                </div>
-              }
-            >
-              <List.Item.Meta
-                title={
-                  <Space size='large'>
-                    <div className={styles.title}>{item.name}</div>
-                    <div className={styles.price}>{item.price} ￥</div>
-                  </Space>
-                }
-                description={
-                  <Flex
-                    className={styles.contentContainer}
-                    gap='middle'
-                    vertical
-                  >
-                    <div
-                      style={{
-                        color: item.stock === 0 ? 'red' : '#000',
-                        fontSize: '1.2rem',
-                      }}
-                    >
-                      库存 {item.stock} 件
-                    </div>
-                  </Flex>
-                }
-              />
-              <Flex justify='space-between' align='center'>
-                <QuantityPanel
-                  defaultQuantity={item.quantity}
-                  maxQuantity={item.stock}
-                  minQuantity={1}
-                  onQuantityChange={(quantity) => {
-                    updateQuantity(item.id, quantity)
-                  }}
-                />
-                <div className={styles.itemTotalPrice}>
-                  总计 <span>{item.price * item.quantity} ￥</span>
-                </div>
-                <Button
-                  icon={<DeleteOutlined />}
-                  danger
-                  type='text'
-                  className={styles.deleteButton}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    removeItem(item.id)
-                  }}
-                />
-              </Flex>
-            </List.Item>
-            <div className={styles.divider}></div>
-          </>
-        )}
-      ></List>
-      <div className={styles.cartFooter}>
-        合计 <span>{totalPrice.toFixed(2)} ￥</span>
-      </div>
+      {nestedNode.current}
     </Flex>
   )
 }

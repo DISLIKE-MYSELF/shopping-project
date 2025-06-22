@@ -1,10 +1,10 @@
 package com.example.backend;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -202,18 +202,19 @@ class UserControllerTest {
         {
           "username": "testuser",
           "password": "password"
-        }""").andExpect(status().isOk()).andExpect(jsonPath("$.token").exists()).andReturn();
+        }""").andExpect(status().isOk()).andExpect(jsonPath("$.data.token").exists()).andReturn();
 
     // 解析token
     String response = result.getResponse().getContentAsString();
-    String curToken = JsonPath.parse(response).read("$.token");
+    String curToken = JsonPath.parse(response).read("$.data.token");
     assertNotNull(curToken);
     assertTrue(curToken.length() > 10);
 
     // 获取当前登录用户
-    MvcResult curResult = mockMvc
-        .perform(get("/api/users/current").header("Authorization", "Bearer " + curToken))
-        .andExpect(status().isOk()).andExpect(jsonPath("$.username").value("testuser")).andReturn();
+    MvcResult curResult =
+        mockMvc.perform(get("/api/users/current").header("Authorization", "Bearer " + curToken))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.data.username").value("testuser"))
+            .andReturn();
 
     logger.info("测试登录并获取当前用户");
     logger.info("返回结果: {}", response);
@@ -267,28 +268,42 @@ class UserControllerTest {
         {
           "username": "testuser",
           "password": "password"
-        }""").andExpect(status().isOk()).andExpect(jsonPath("$.token").exists()).andReturn();
+        }""").andExpect(status().isOk()).andExpect(jsonPath("$.data.token").exists()).andReturn();
 
     // 解析token
     String response = result.getResponse().getContentAsString();
-    String curToken = JsonPath.parse(response).read("$.token");
+    String curToken = JsonPath.parse(response).read("$.data.token");
     assertNotNull(curToken);
     assertTrue(curToken.length() > 10);
 
     // 获取当前登录用户
-    MvcResult curResult = mockMvc
-        .perform(get("/api/users/current").header("Authorization", "Bearer " + curToken))
-        .andExpect(status().isOk()).andExpect(jsonPath("$.username").value("testuser")).andReturn();
+    MvcResult curResult =
+        mockMvc.perform(get("/api/users/current").header("Authorization", "Bearer " + curToken))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.data.username").value("testuser"))
+            .andReturn();
 
     logger.info("测试登录并获取当前用户");
     logger.info("返回结果: {}", response);
     logger.info("token: {}", curToken);
     logger.info("当前用户: {}", curResult.getResponse().getContentAsString());
 
-    mockMvc.perform(delete("/api/users/current").header("Authorization", "Bearer " + token))
-        .andExpect(status().isNoContent());
+    mockMvcUtils.performDeleteRequest("/api/users/current").andExpect(status().isNoContent());
 
     assertEquals(userRepository.findByUsername("testuser").orElse(null), null);
+  }
+
+  // 测试更新当前用户信息
+  @Test
+  void testUpdateCurrentUser() throws Exception {
+    MvcResult result = mockMvcUtils.performPostRequest("/api/users/current", """
+        {
+          "address": "复旦大学"
+        }
+        """).andExpect(status().isOk()).andExpect(jsonPath("$.data.address", is("复旦大学")))
+        .andReturn();
+
+    logger.info("测试更新当前用户信息");
+    logger.info("返回结果: {}", result.getResponse().getContentAsString());
   }
 
 }

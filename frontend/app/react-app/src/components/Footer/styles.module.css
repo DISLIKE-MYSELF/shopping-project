@@ -1,0 +1,62 @@
+.wrapper {
+  height: 10rem;
+  padding: 50px 300px 20px 300px;
+  background: #f9f9f9;
+}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.content {
+  font-size: 1.1rem;
+  padding: 0.3rem 0;
+  color: #555;
+}
+
+.logo {
+  color: #2879fe;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.copyright {
+  margin-left: 20px;
+  color: gray;
+}
+
+.githubText {
+  transform: translateY(-0.05rem);
+}
+
+.link {
+  font-size: 1.1rem;
+  color: #555;
+  position: relative;
+  padding: 0.3rem 0;
+  text-decoration: none;
+  transition: color 0.3s;
+  width: fit-content;
+  cursor: pointer;
+}
+
+.link:hover {
+  color: #1890ff;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #1890ff;
+  transition: width 0.3s;
+}
+
+.link:hover::after {
+  width: 100%;
+}

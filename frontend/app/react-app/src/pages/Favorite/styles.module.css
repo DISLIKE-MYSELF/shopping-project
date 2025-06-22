@@ -1,0 +1,13 @@
+.wrapper {
+  margin: 20px;
+}
+
+.col {
+  display: flex;
+  justify-content: center;
+}
+
+.favoriteName {
+  font-size: 1.1rem;
+  font-weight: 400;
+}

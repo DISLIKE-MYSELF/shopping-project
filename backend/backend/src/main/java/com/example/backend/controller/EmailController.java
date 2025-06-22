@@ -16,6 +16,7 @@ import com.example.backend.dto.response.EmailResponse;
 import com.example.backend.service.EmailService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import com.example.backend.dto.response.ApiResponse;
 
 @RestController
 @RequestMapping("/api/emails")
@@ -26,22 +27,26 @@ public class EmailController {
 
   // 获取登录用户的所有邮件
   @GetMapping("/my-emails")
-  public ResponseEntity<List<EmailResponse>> getEmailsByUsername(
+  public ResponseEntity<ApiResponse<List<EmailResponse>>> getEmailsByUsername(
       @AuthenticationPrincipal UserDetails userDetails) {
-    return ResponseEntity.ok().body(emailService.getEmailsByUsername(userDetails.getUsername()));
+    return ResponseEntity
+        .ok(ApiResponse.of(emailService.getEmailsByUsername(userDetails.getUsername())));
   }
 
   // 获取指定邮件
   @GetMapping("/{emailId}")
-  public ResponseEntity<EmailResponse> getEmailById(
+  public ResponseEntity<ApiResponse<EmailResponse>> getEmailById(
       @AuthenticationPrincipal UserDetails userDetails, @PathVariable Long emailId) {
-    return ResponseEntity.ok().body(emailService.getEmailById(userDetails.getUsername(), emailId));
+    return ResponseEntity
+        .ok(ApiResponse.of(emailService.getEmailById(userDetails.getUsername(), emailId)));
   }
 
   // 发送邮件
-  @PostMapping
-  public ResponseEntity<EmailResponse> sendEmail(@RequestBody @Valid SendEmailRequest request) {
-    return ResponseEntity.ok().body(emailService.sendEmail(request));
+  @PostMapping("/send")
+  public ResponseEntity<ApiResponse<EmailResponse>> sendEmail(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @RequestBody @Valid SendEmailRequest request) {
+    return ResponseEntity.ok(ApiResponse.of(emailService.sendEmail(request)));
   }
 
   // 删除邮件

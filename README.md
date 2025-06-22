@@ -57,7 +57,7 @@ docker-compose up --build
 ### ✅ 4. 启动后端服务
 
 ```bash
-mvn package -DskipTests
+mvn clean package -DskipTests
 docker-compose down --remove-orphans -v
 docker-compose build --no-cache backend
 docker-compose up backend

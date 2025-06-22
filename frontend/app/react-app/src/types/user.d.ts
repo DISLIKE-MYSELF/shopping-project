@@ -1,9 +1,30 @@
-export interface User {
+export interface RegisterRequest {
+  username: string
+  password: string
+  email: string
+}
+
+export interface RegisterResponse {
+  userId: number
+}
+
+export interface LoginRequest {
+  username: string
+  password: string
+}
+
+export interface LoginResponse {
+  token: string
+}
+
+export interface UserProfileResponse {
   id: number
   username: string
   email: string
-  salt: string
-  password: string
+  address: string
   createdAt: string
-  lastLogin: string
+}
+
+export interface UpdateUserProfileRequest {
+  address: string
 }
